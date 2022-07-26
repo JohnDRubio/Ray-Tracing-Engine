@@ -224,7 +224,10 @@ private:
 public:
 	static constexpr int ScreenWidth = 800;
 	static constexpr int ScreenHeight = 600;
-
+	bool inhibitUp = false;
+	bool inhibitDown = false;
+	bool inhibitLeft = false;
+	bool inhibitRight = false;
 
 	void CanvasToViewport(int x, int y);
 	void TraceRay(double, double);
@@ -285,28 +288,37 @@ public:
 
 	void MoveSpheresUp()
 	{
-		SpheresInScene[0].center[1] += 0.1;
-		SpheresInScene[1].center[1] += 0.1;
-		SpheresInScene[2].center[1] += 0.1;
+		vy += 0.01;
+		SpheresInScene[0].center[1] += vy;
+		SpheresInScene[1].center[1] += vy;
+		SpheresInScene[2].center[1] += vy;
 	}	
 	
 	void MoveSpheresDown()
 	{
-		SpheresInScene[0].center[1] -= 0.1;
-		SpheresInScene[1].center[1] -= 0.1;
-		SpheresInScene[2].center[1] -= 0.1;
+		vy -= 0.01;
+		SpheresInScene[0].center[1] += vy;
+		SpheresInScene[1].center[1] += vy;
+		SpheresInScene[2].center[1] += vy;
 	}
 	void MoveSpheresLeft()
 	{
-		SpheresInScene[0].center[0] -= 0.1;
-		SpheresInScene[1].center[0] -= 0.1;
-		SpheresInScene[2].center[0] -= 0.1;
+		vx -= 0.01;
+		SpheresInScene[0].center[0] += vx;
+		SpheresInScene[1].center[0] += vx;
+		SpheresInScene[2].center[0] += vx;
 	}
 	void MoveSpheresRight()
 	{
-		SpheresInScene[0].center[0] += 0.1;
-		SpheresInScene[1].center[0] += 0.1;
-		SpheresInScene[2].center[0] += 0.1;
+		vx += 0.01;
+		SpheresInScene[0].center[0] += vx;
+		SpheresInScene[1].center[0] += vx;
+		SpheresInScene[2].center[0] += vx;
+	}
+	void Stop()
+	{
+		vx = 0;
+		vy = 0;
 	}
 
 
@@ -337,6 +349,9 @@ private:
 	Sprite s4_up;
 	Sprite s4_down;
 	Light _L1, _L2, _L3, _L4; 
+	float vx = 0;
+	float vy = 0;
+	
 };
 
 

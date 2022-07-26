@@ -55,7 +55,18 @@ void Game::UpdateModel()
 {
 	if (wnd.kbd.KeyIsPressed(VK_UP))
 	{
-		gfx.MoveSpheresUp();
+		if (gfx.inhibitUp)
+		{
+		}
+		else
+		{
+			gfx.MoveSpheresUp();
+			gfx.inhibitUp = true;
+		}
+	}
+	else
+	{
+		gfx.inhibitUp = false;
 	}
 	if (wnd.kbd.KeyIsPressed(VK_DOWN))
 	{
@@ -70,6 +81,10 @@ void Game::UpdateModel()
 	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
 	{
 		gfx.MoveSpheresRight();
+	}
+	if (wnd.kbd.KeyIsPressed(VK_SPACE))
+	{
+		gfx.Stop();
 	}
 }
 
