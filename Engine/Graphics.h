@@ -289,38 +289,44 @@ public:
 	void MoveSpheresUp()
 	{
 		vy += 0.01;
-		SpheresInScene[0].center[1] += vy;
-		SpheresInScene[1].center[1] += vy;
-		SpheresInScene[2].center[1] += vy;
+		SpheresInScene[0].center[1] += 0.1;
+		SpheresInScene[1].center[1] += 0.1;
+		SpheresInScene[2].center[1] += 0.1;
 	}	
 	
 	void MoveSpheresDown()
 	{
 		vy -= 0.01;
-		SpheresInScene[0].center[1] += vy;
-		SpheresInScene[1].center[1] += vy;
-		SpheresInScene[2].center[1] += vy;
+		SpheresInScene[0].center[1] -= 0.1;
+		SpheresInScene[1].center[1] -= 0.1;
+		SpheresInScene[2].center[1] -= 0.1;
 	}
 	void MoveSpheresLeft()
 	{
 		vx -= 0.01;
-		SpheresInScene[0].center[0] += vx;
-		SpheresInScene[1].center[0] += vx;
-		SpheresInScene[2].center[0] += vx;
+		SpheresInScene[0].center[0] -= 0.1;
+		SpheresInScene[1].center[0] -= 0.1;
+		SpheresInScene[2].center[0] -= 0.1;
 	}
 	void MoveSpheresRight()
 	{
 		vx += 0.01;
-		SpheresInScene[0].center[0] += vx;
-		SpheresInScene[1].center[0] += vx;
-		SpheresInScene[2].center[0] += vx;
+		SpheresInScene[0].center[0] += 0.1;
+		SpheresInScene[1].center[0] += 0.1;
+		SpheresInScene[2].center[0] += 0.1;
 	}
-	void Stop()
+	void Reset()
 	{
-		vx = 0;
-		vy = 0;
+		SpheresInScene[0].center[0] = 0;
+		SpheresInScene[1].center[0] = 2;
+		SpheresInScene[2].center[0] = -2;
+		SpheresInScene[0].center[1] = -1;
+		SpheresInScene[1].center[1] = 0;
+		SpheresInScene[2].center[1] = 0;
+		SpheresInScene[0].center[2] = 3;
+		SpheresInScene[1].center[2] = 4;
+		SpheresInScene[2].center[2] = 4;
 	}
-
 
 	void SetLights(Light _L1, Light _L2, Light _L3, Light _L4)
 	{
