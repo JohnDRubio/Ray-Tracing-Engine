@@ -28,18 +28,6 @@ Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd)
-	/*s1_up(wnd, 0, 1, 3, 255, 0, 0, 1, 500),
-	s1_down(wnd,0,-1,3,255, 0, 0, 1, 500),
-	s2_up(wnd, 2, 2, 4, 0, 0, 255, 1, 500),
-    s2_down(wnd, 2, 0, 4, 0, 0, 255, 1, 500),
-    s3_up(wnd, -2, 2, 4, 0, 255, 0, 1, 10),
-    s3_down(wnd, -2, 0, 4, 0, 255, 0, 1, 10),
-    s4_up(wnd, 0, -5001, 0, 255, 255, 0, 5000, 1000),
-    s4_down(wnd, 0, -5001, 0, 255, 255, 0, 5000, 1000),*/
-	/*_L1(Light::LTYPE::ambient, 0.2),
-	_L2(Light::LTYPE::point, 0.6, 0, 0, 0, 2, 1, 0),
-	_L3(Light::LTYPE::directional, 0.2, 1, 4, 4, 0, 0, 0),
-	_L4(Light::LTYPE::directional, 0, -1, -4, 4, 0, 0, 0)*/
 {
 }
 
@@ -61,12 +49,10 @@ void Game::UpdateModel()
 	{
 		gfx.MoveSpheresDown();
 	}
-
 	if (wnd.kbd.KeyIsPressed(VK_LEFT))			
 	{
 		gfx.MoveSpheresLeft();
 	}
-
 	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
 	{
 		gfx.MoveSpheresRight();
@@ -83,32 +69,13 @@ void Game::ComposeFrame()
 	// Center has been translated to the point (400, 300)
 	// Main method from computer graphics from scratch ch 1
 
-	//if (wnd.kbd.KeyIsPressed(VK_UP))
-	//{
-		//gfx.SetSphere(s1_up,s2_up,s3_up,s4_down);
-		//gfx.SetLights(_L1, _L2, _L3, _L4);
 		for (int x = 1 - Graphics::ScreenWidth / 2; x < Graphics::ScreenWidth / 2; x++)
 		{
 			for (int y = 1 - Graphics::ScreenHeight / 2; y < Graphics::ScreenHeight / 2; y++)
 			{
 				gfx.CanvasToViewport(x, y);
 				gfx.TraceRay(1, DBL_MAX);
-				gfx.PutPixel(Graphics::ScreenWidth / 2 + x, Graphics::ScreenHeight / 2 - y, gfx.COLORS[0], gfx.COLORS[1], gfx.COLORS[2]);
+				gfx.PutPixel(Graphics::ScreenWidth / 2 + x, Graphics::ScreenHeight / 2 - y, gfx.COLORS.V[0], gfx.COLORS.V[1], gfx.COLORS.V[2]);
 			}
 		}
-//	}
-//	else
-//	{
-//		/*gfx.SetSphere(s1_down,s2_down,s3_down,s4_down);
-//		gfx.SetLights(_L1, _L2, _L3, _L4);*/
-//		for (int x = 1 - Graphics::ScreenWidth / 2; x < Graphics::ScreenWidth / 2; x++)
-//		{
-//			for (int y = 1 - Graphics::ScreenHeight / 2; y < Graphics::ScreenHeight / 2; y++)
-//			{
-//				gfx.CanvasToViewport(x, y);
-//				gfx.TraceRay(1, DBL_MAX);
-//				gfx.PutPixel(Graphics::ScreenWidth / 2 + x, Graphics::ScreenHeight / 2 - y, gfx.COLORS[0], gfx.COLORS[1], gfx.COLORS[2]);
-//			}
-//		}
-//	}
 }

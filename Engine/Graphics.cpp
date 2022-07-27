@@ -22,10 +22,12 @@
 #include "Graphics.h"
 #include "DXErr.h"
 #include "ChiliException.h"
+#include "Vec3.h"
 #include <assert.h>
 #include <string>
 #include <array>
 #include <cmath>
+
 
 using namespace std;
 
@@ -409,119 +411,143 @@ std::wstring Graphics::Exception::GetExceptionType() const
 }
 
 // Viewport parameters
-// Looks slightly less distorted with height:width = 3:4
 const int ViewportHeight = 1;
 const int ViewportWidth = 1;
 
 // Gives direction of ray 
 void Graphics::CanvasToViewport(int x, int y)
 {
-	D[0] = (double)x * (double)ViewportWidth / (double)Graphics::ScreenWidth;
-	D[1] = (double)y * (double)ViewportHeight / (double)Graphics::ScreenHeight;
-	D[2] = 1;
+	D.V[0] = (double)x * (double)ViewportWidth / (double)Graphics::ScreenWidth;
+	D.V[1] = (double)y * (double)ViewportHeight / (double)Graphics::ScreenHeight;
+	D.V[2] = 1;
 }
 
-// 3d dot product
-int Graphics::dot(int a[], int b[])
-{
-	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-}
+//// 3d dot product
+//int Graphics::dot(int a[], int b[])
+//{
+//	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+//}
+//
+//// 3d dot product
+//double Graphics::dot(double a[], double b[])
+//{
+//	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+//}
+//
+//// 3d dot product
+//double Graphics::dot(double a[], int b[])
+//{
+//	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+//}
 
 // 3d dot product
-double Graphics::dot(double a[], double b[])
+double Graphics::dot(const Vec3& lhs, const Vec3& rhs)
 {
-	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+	return lhs.V[0] * rhs.V[0] + lhs.V[1] * rhs.V[1] + lhs.V[2] * rhs.V[2];
 }
 
-// 3d dot product
-double Graphics::dot(double a[], int b[])
+// Vector addition
+Vec3 operator+(const Vec3& lhs, const Vec3& rhs)
 {
-	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+	Vec3 res;
+	res.V[0] = lhs.V[0] + rhs.V[0];
+	res.V[1] = lhs.V[1] + rhs.V[1];
+	res.V[2] = lhs.V[2] + rhs.V[2];
+	return  res;
+}
+
+// Vector subtraction
+Vec3 operator-(const Vec3& lhs, const Vec3& rhs)
+{
+	Vec3 res;
+	res.V[0] = lhs.V[0] - rhs.V[0];
+	res.V[1] = lhs.V[1] - rhs.V[1];
+	res.V[2] = lhs.V[2] - rhs.V[2];
+	return  res;
+}
+
+// Scalar * Vector
+Vec3 operator*(double s, const Vec3& rhs)
+{
+	Vec3 res;
+	res.V[0] = s * rhs.V[0];
+	res.V[1] = s * rhs.V[1];
+	res.V[2] = s * rhs.V[2];
+	return  res;
+}
+
+// Vector assignment
+Vec3& Vec3::operator=(const Vec3& rhs)
+{
+	if (this != &rhs)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			V[i] = rhs.V[i];
+		}
+		return *this;
+	}
+	else
+		return *this;
 }
 
 // 3d vector addition
-void Graphics::VecAdd(double a[3], double b[3], double c[3])
-{
-	c[0] = a[0] + b[0];
-	c[1] = a[1] + b[1];
-	c[2] = a[2] + b[2];
+//void Graphics::VecAdd(double a[3], double b[3], double c[3])		// Replaced with operator overload '+' for Vec3 class
+//{
+//	c[0] = a[0] + b[0];
+//	c[1] = a[1] + b[1];
+//	c[2] = a[2] + b[2];
+//
+//}
+//
+//// 3d vector subtraction
+//void Graphics::VecSub(double a[3], double b[3], double c[3])		// Replaced with operator overload '-' for Vec3 class
+//{
+//	c[0] = a[0] - b[0];
+//	c[1] = a[1] - b[1];
+//	c[2] = a[2] - b[2];
+//}
+//
+//// scalar * vector
+//void Graphics::scaleVec(double s, double a[3], double b[3])			// Replaced with operator overload '*' for Vec3 class with scalars
+//{
+//	b[0] = s * a[0];
+//	b[1] = s * a[1];
+//	b[2] = s * a[2];
+//}
+//
+//// Magnitude
+//double Graphics::vecLength(double a[3])
+//{
+//	return (sqrt(dot(a, a)));
+//}
 
-}
-
-// 3d vector subtraction
-void Graphics::VecSub(double a[3], double b[3], double c[3])
+// Magnitude
+double Graphics::vecLength(const Vec3& v)
 {
-	c[0] = a[0] - b[0];
-	c[1] = a[1] - b[1];
-	c[2] = a[2] - b[2];
-}
-
-// scalar * vector
-void Graphics::scaleVec(double s, double a[3], double b[3])
-{
-	b[0] = s * a[0];
-	b[1] = s * a[1];
-	b[2] = s * a[2];
-}
-
-// magnitude
-double Graphics::vecLength(double a[3])
-{
-	return (sqrt(dot(a, a)));
+	return (sqrt(dot(v, v)));
 }
 
 // Bound pixel values
 void Graphics::BoundPixelValues()
 {
 	for (int i = 0; i < 3; i++)
-		if (COLORS[i] > 255)
-			COLORS[i] = 255;
+		if (COLORS.V[i] > 255)
+			COLORS.V[i] = 255;
 }
-
-//Sphere SpheresInScene[4];
-
-// Set position
-
-//void Graphics::SetSphere(Sprite s1, Sprite s2, Sprite s3, Sprite s4)
-//{
-//	//Spheres in the scene
-//	Sphere Sphere1(s1.x, s1.y, s1.z, s1.r, s1.g, s1.b, s1.radius, s1.specular);
-//	Sphere Sphere2(s2.x, s2.y, s2.z, s2.r, s2.g, s2.b, s2.radius, s2.specular);
-//	Sphere Sphere3(s3.x, s3.y, s3.z, s3.r, s3.g, s3.b, s3.radius, s3.specular);
-//	Sphere Sphere4(s4.x, s4.y, s4.z, s4.r, s4.g, s4.b, s4.radius, s4.specular);
-//
-//	SpheresInScene[0] = Sphere1;
-//	SpheresInScene[1] = Sphere2;
-//	SpheresInScene[2] = Sphere3;
-//	SpheresInScene[3] = Sphere4;
-//
-//	//SpheresInScene = { Sphere1, Sphere2, Sphere3, Sphere4 };
-//}
-
-//Light
-//Light L1(Light::LTYPE::ambient, 0.2);					// <- DO SAME THING YOU DID FOR SPHERES (don't initialize each time)
-//Light L2(Light::LTYPE::point, 0.6, 0, 0, 0, 2, 1, 0);
-//Light L3(Light::LTYPE::directional, 0.2,1,4,4,0,0,0);
-//Light L4(Light::LTYPE::directional, 0,-1,-4,4,0,0,0);
-//Light LightsInScene[] = { L1,L2,L3, L4 };
 
 // Returns color of sphere that ray intersects
 void Graphics::IntersectRaySphere(int index)
 {
 	MISS = 1;
-	CAMERA[0] = 0;
-	CAMERA[1] = 0;
-	CAMERA[2] = 0;
+	Vec3 CO;
+	CO = CAMERA - SpheresInScene[index].center;
 
-	double CO[3]{};
-	VecSub(CAMERA, new double[3] { (double)SpheresInScene[index].center[0], (double)SpheresInScene[index].center[1], (double)SpheresInScene[index].center[2] }, CO);
-
-	double r = SpheresInScene[index].radius;
-
-	double a = dot(D, D);
-	double b = 2*dot(CO, D);
-	double c = dot(CO, CO) - r * r;
-	double discriminant = b * b - 4 * a * c;
+	float r = SpheresInScene[index].radius;
+	float a = dot(D, D);
+	float b = 2*dot(CO, D);
+	float c = dot(CO, CO) - r * r;
+	float discriminant = b * b - 4 * a * c;
 
 	if (discriminant < 0) {
 		INT_PTS[0] = INT_PTS[1] = INT_MAX;
@@ -532,22 +558,22 @@ void Graphics::IntersectRaySphere(int index)
 	else 
 	{
 		MISS = 0;
-		double t1 = (( - 1 * b + sqrt(discriminant)) / (2 * a));
-		double t2 = (( - 1 * b - sqrt(discriminant)) / (2 * a));
-		INT_PTS[0] = t1;
-		INT_PTS[1] = t2;
+		INT_PTS[0] = (( - 1 * b + sqrt(discriminant)) / (2 * a));
+		INT_PTS[1] = (( - 1 * b - sqrt(discriminant)) / (2 * a));
 	}
 }
 
 void Graphics::TraceRay(double t_min, double t_max)
 {
-	double closest_t = DBL_MAX;
-	Sphere* closest_sphere = NULL;
-	double intensity = 0.0;
+	closest_t = DBL_MAX;
+	closest_sphere = NULL;
+	intensity = 0.0;
 
-	//Compute pixel color
-	for (int i = 0; i < sizeof(SpheresInScene) / sizeof(SpheresInScene[0]); i++)
+	// Compute pixel color
+	for (int i = 0; i < 4; i++)		// If more spheres are added, replace 4 with sizeof(SpheresInScene) / sizeof(SpheresInScene[0])
 	{
+
+		// Test if ray intersects Sphere[i]
 		IntersectRaySphere(i);
 
 		if (!MISS)
@@ -568,17 +594,13 @@ void Graphics::TraceRay(double t_min, double t_max)
 				if ((INT_PTS[0] > t_min && INT_PTS[0] < t_max && INT_PTS[0] <= closest_t) || (INT_PTS[1] > t_min && INT_PTS[1] < t_max && INT_PTS[1] <= closest_t))
 				{					
 					// Set P = O + t * D
-					double tD[3]{};
-					scaleVec(closest_t, D, tD);
-					VecAdd(CAMERA, tD, P);
+					P = CAMERA + closest_t * D;
 
 					if (INT_PTS[0] <= closest_t || INT_PTS[1] <= closest_t)
 					{
-						// shading
-						intensity = ComputeLighting(P, new double[3]{-1 * D[0], -1 * D[1], -1 * D[2]}, i);
-						
-						// multiply pixel values by intensity
-						scaleVec(intensity, new double[3]{ (double)closest_sphere->color[0], (double)closest_sphere->color[1], (double)closest_sphere->color[2] }, COLORS);
+						// Shading
+						intensity = ComputeLighting(i);
+						COLORS = intensity * closest_sphere->color;
 
 						// Bound pixel values
 						BoundPixelValues();
@@ -590,35 +612,35 @@ void Graphics::TraceRay(double t_min, double t_max)
 		{
 			if (closest_sphere == NULL) 
 			{
-				COLORS[0] = 255;
-				COLORS[1] = 255;
-				COLORS[2] = 255;
+				COLORS.V[0] = 255;
+				COLORS.V[1] = 255;
+				COLORS.V[2] = 255;
 			}
 		}
 	}
 }
 
-//Compute diffuse light
-double Graphics::ComputeLighting(double POS[3], double V[3], int index)
+// Compute Lighting
+double Graphics::ComputeLighting(int index)
 {
 	// Initialize values
-	double intensity = 0.0;
-	double CENTER[3] = { SpheresInScene[index].center[0], SpheresInScene[index].center[1], SpheresInScene[index].center[2] };
-	double L[3]{};
-	double P_minus_C[3]{};
-	double Normal[3]{};
 	double length_P_minus_C;
+	Vec3 L;
+	Vec3 P_Minus_C;
+	Vec3 Normal;
+	intensity = 0;
+
 
 	// Set P_minus_C
-	VecSub(P, CENTER, P_minus_C);
-	length_P_minus_C = vecLength(P_minus_C);
+	P_Minus_C = P - SpheresInScene[index].center;
+	length_P_minus_C = vecLength(P_Minus_C);
 
 	// Set magnitude of Normal to 1
-	scaleVec(1 / length_P_minus_C, P_minus_C, Normal);
+	Normal = (1 / length_P_minus_C) * P_Minus_C;
 
-	for (int i = 0; i < sizeof(LightsInScene) / sizeof(LightsInScene[0]); i++)
+	for (int i = 0; i < 3; i++)		// If more lights are added to scene, replace 3 with sizeof(LightsInScene) / sizeof(LightsInScene[0])
 	{
-		if (LightsInScene[i].type == Light::LTYPE::ambient)		// when refactoring, use enums for light type
+		if (LightsInScene[i].type == Light::LTYPE::ambient)		
 		{
 			intensity += LightsInScene[i].intensity;
 		}
@@ -626,31 +648,30 @@ double Graphics::ComputeLighting(double POS[3], double V[3], int index)
 		{
 			if (LightsInScene[i].type == Light::LTYPE::point)
 			{
-				VecSub(new double[3]{ LightsInScene[i].POSITION[0], LightsInScene[i].POSITION[1], LightsInScene[i].POSITION[2] }, POS, L);
+				L = LightsInScene[i].POSITION - P;
 			}
 			else
 			{
 				if (LightsInScene[i].type == Light::LTYPE::directional)
 				{
-					for (int j = 0; j < sizeof(LightsInScene[i].DIRECTION) / sizeof(LightsInScene[i].DIRECTION[0]); j ++)
-					{
-						L[j] = LightsInScene[i].DIRECTION[j];
-					}
+					L = LightsInScene[i].DIRECTION;
 				}
 			}
 
 			double n_dot_L = dot(Normal, L);
 
+			// Diffuse light
 			if (n_dot_L > 0)
 				intensity += LightsInScene[i].intensity * (n_dot_L / (vecLength(Normal) * vecLength(L)));
 
+			// Specular light
 			if (SpheresInScene[index].specular != -1)
 			{
-				double R[3]{};
+				Vec3 R;
+				Vec3 V = -1 * D;
 
 				// R = 2 * N * <N,L> - L
-				scaleVec(2 * n_dot_L, Normal, R);
-				VecSub(R, L, R);
+				R = 2 * n_dot_L * Normal - L;
 
 				double r_dot_v = dot(R, V);
 

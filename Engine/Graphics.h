@@ -23,6 +23,7 @@
 #include <wrl.h>
 #include "ChiliException.h"
 #include "Colors.h"
+#include "Vec3.h"
 #include <vector>
 #include <string>
 using namespace std;
@@ -32,19 +33,19 @@ public:
 	enum LTYPE { ambient, point, directional };
 	LTYPE type;
 	double intensity;
-	double DIRECTION[3]{};
-	double POSITION[3]{};
+	Vec3 DIRECTION;
+	Vec3 POSITION;
 
 	Light(LTYPE t = ambient, double i = 1, double d1 = 0, double d2 = 0, double d3 = 0, double p1 = 0, double p2 = 0, double p3 = 0)
 	{
 		type = t;
 		intensity = i;
-		DIRECTION[0] = d1;
-		DIRECTION[1] = d2;
-		DIRECTION[2] = d3;
-		POSITION[0] = p1;
-		POSITION[1] = p2;
-		POSITION[2] = p3;
+		DIRECTION.V[0] = d1;
+		DIRECTION.V[1] = d2;
+		DIRECTION.V[2] = d3;
+		POSITION.V[0] = p1;
+		POSITION.V[1] = p2;
+		POSITION.V[2] = p3;
 	}
 
 	Light (const Light& L)
@@ -54,48 +55,64 @@ public:
 
 		for (int i = 0; i < 3; i++)
 		{
-			DIRECTION[i] = L.DIRECTION[i];
-			POSITION[i] = L.POSITION[i];
+			DIRECTION.V[i] = L.DIRECTION.V[i];
+			POSITION.V[i] = L.POSITION.V[i];
 		}
+	}
+
+	Light& operator=(const Light& lhs)
+	{
+		if (this != &lhs)
+		{
+			type = lhs.type;
+			intensity = lhs.intensity;
+
+			for (int i = 0; i < 3; i++)
+			{
+				DIRECTION.V[i] = lhs.DIRECTION.V[i];
+				POSITION.V[i] = lhs.POSITION.V[i];
+			}
+		}
+		return *this;
 	}
 
 	void set(LTYPE t = ambient, double i = 1, double d1 = 0, double d2 = 0, double d3 = 0, double p1 = 0, double p2 = 0, double p3 = 0)
 	{
 		type = t;
 		intensity = i;
-		DIRECTION[0] = d1;
-		DIRECTION[1] = d2;
-		DIRECTION[2] = d3;
-		POSITION[0] = p1;
-		POSITION[1] = p2;
-		POSITION[2] = p3;
+		DIRECTION.V[0] = d1;
+		DIRECTION.V[1] = d2;
+		DIRECTION.V[2] = d3;
+		POSITION.V[0] = p1;
+		POSITION.V[1] = p2;
+		POSITION.V[2] = p3;
 	}
 };
 
 class Sphere {
 public:
-	double center[3];
-	int color[3];
+	Vec3 center;
+	Vec3 color;
 	double radius = 1;
 	int specular = -1;
 
-	void CenterToOrigin()
+	/*void CenterToOrigin()
 	{
 		center[0] = center[1] = center[2] = 0;
-	}
+	}*/
 	void noColor()
 	{
-		color[0] = color[1] = color[2] = 0;
+		color.V[0] = color.V[1] = color.V[2] = 0;
 	}
 
 	Sphere(int x = 0, int y = 0, int z = 0, int r = 0, int g = 0, int b = 0, double rad = 1, int s = -1)
 	{
-		center[0] = x;
-		center[1] = y;
-		center[2] = z;
-		color[0] = r;
-		color[1] = g;
-		color[2] = b;
+		center.V[0] = x;
+		center.V[1] = y;
+		center.V[2] = z;
+		color.V[0] = r;
+		color.V[1] = g;
+		color.V[2] = b;
 		radius = rad;
 		specular = s;
 	}
@@ -106,8 +123,8 @@ public:
 		specular = sphere.specular;
 		for (int i = 0; i < 3; i++)
 		{
-			center[i] = sphere.center[i];
-			color[i] = sphere.color[i];
+			center.V[i] = sphere.center.V[i];
+			color.V[i] = sphere.color.V[i];
 		}
 	}
 };
@@ -152,13 +169,13 @@ public:
 class Graphics
 {
 public:
-
-	double D[3]{};
-	double COLORS[3]{};
+	Vec3 D;
+	Vec3 P;
+	Vec3 CAMERA;
+	Vec3 COLORS;
 	double INT_PTS[2]{};
 	bool MISS = 1;
-	double CAMERA[3]{};
-	double P[3]{};
+	
 
 	friend Sphere;
 	friend Light;
@@ -224,59 +241,66 @@ private:
 public:
 	static constexpr int ScreenWidth = 800;
 	static constexpr int ScreenHeight = 600;
-	bool inhibitUp = false;
+	/*bool inhibitUp = false;
 	bool inhibitDown = false;
 	bool inhibitLeft = false;
-	bool inhibitRight = false;
+	bool inhibitRight = false;*/
+	float intensity, closest_t;
 
 	void CanvasToViewport(int x, int y);
 	void TraceRay(double, double);
 	void IntersectRaySphere(int);
-	double ComputeLighting(double POS[3], double V[3], int index);
+	double ComputeLighting(int index);
 	int dot(int[], int[]);
 	double dot(double[], double[]);
 	double dot(double[], int[]);
+	double dot(const Vec3&, const Vec3&);
 	void VecAdd(double[3], double[3], double c[3]);
 	void VecSub(double[3], double[3], double c[3]);
 	void scaleVec(double, double[3], double[3]);
 	double vecLength(double[3]);
+	double vecLength(const Vec3&);
 	void BoundPixelValues();
+	friend Vec3 operator+(const Vec3& lhs, const Vec3& rhs);
+	friend Vec3 operator-(const Vec3& lhs, const Vec3& rhs);
+	friend Vec3 operator*(double s, const Vec3& rhs);
+	
 
 	void SetSpheres(Sprite s1, Sprite s2, Sprite s3, Sprite s4)
 	{
-		Sphere1.center[0] = s1.x;
-		Sphere1.center[1] = s1.y;
-		Sphere1.center[2] = s1.z;
-		Sphere1.color[0] = s1.r;
-		Sphere1.color[1] = s1.g;
-		Sphere1.color[2] = s1.b;
+		Sphere1.center.V[0] = s1.x;
+		Sphere1.center.V[1] = s1.y;
+		Sphere1.center.V[2] = s1.z;
+		Sphere1.color.V[0] = s1.r;
+		Sphere1.color.V[1] = s1.g;
+		Sphere1.color.V[2] = s1.b;
 		Sphere1.radius = s1.radius;
 		Sphere1.specular = s1.specular;
 
-		Sphere2.center[0] = s2.x;
-		Sphere2.center[1] = s2.y;
-		Sphere2.center[2] = s2.z;
-		Sphere2.color[0] = s2.r;
-		Sphere2.color[1] = s2.g;
-		Sphere2.color[2] = s2.b;
+		Sphere2.center.V[0] = s2.x;
+		Sphere2.center.V[1] = s2.y;
+		Sphere2.center.V[2] = s2.z;
+		Sphere2.color.V[0] = s2.r;
+		Sphere2.color.V[1] = s2.g;
+		Sphere2.color.V[2] = s2.b;
 		Sphere2.radius = s2.radius;
 		Sphere2.specular = s2.specular;
 
-		Sphere3.center[0] = s3.x;
-		Sphere3.center[1] = s3.y;
-		Sphere3.center[2] = s3.z;
-		Sphere3.color[0] = s3.r;
-		Sphere3.color[1] = s3.g;
-		Sphere3.color[2] = s3.b;
+		Sphere3.center.V[0] = s3.x;
+		Sphere3.center.V[1] = s3.y;
+		Sphere3.center.V[2] = s3.z;
+		Sphere3.color.V[0] = s3.r;
+		Sphere3.color.V[1] = s3.g;
+		Sphere3.color.V[2] = s3.b;
 		Sphere3.radius = s3.radius;
 		Sphere3.specular = s3.specular;
 
-		Sphere4.center[0] = s4.x;
-		Sphere4.center[1] = s4.y;
-		Sphere4.center[2] = s4.z;
-		Sphere4.color[0] = s4.r;
-		Sphere4.color[1] = s4.g;
-		Sphere4.color[2] = s4.b;
+		Sphere4.center.V[0] = s4.x;
+		Sphere4.center.V[1] = s4.y;
+		Sphere4.center.V[2] = s4.z;
+		Sphere4.color.V[0] = s4.r;
+		Sphere4.color.V[1] = s4.g;
+		Sphere4.color.V[2] = s4.b;
 		Sphere4.radius = s4.radius;
 		Sphere4.specular = s4.specular;
 
@@ -288,52 +312,48 @@ public:
 
 	void MoveSpheresUp()
 	{
-		vy += 0.01;
-		SpheresInScene[0].center[1] += 0.1;
-		SpheresInScene[1].center[1] += 0.1;
-		SpheresInScene[2].center[1] += 0.1;
+		SpheresInScene[0].center.V[1] += 0.1;
+		SpheresInScene[1].center.V[1] += 0.1;
+		SpheresInScene[2].center.V[1] += 0.1;
 	}	
 	
 	void MoveSpheresDown()
 	{
-		vy -= 0.01;
-		SpheresInScene[0].center[1] -= 0.1;
-		SpheresInScene[1].center[1] -= 0.1;
-		SpheresInScene[2].center[1] -= 0.1;
+		SpheresInScene[0].center.V[1] -= 0.1;
+		SpheresInScene[1].center.V[1] -= 0.1;
+		SpheresInScene[2].center.V[1] -= 0.1;
 	}
 	void MoveSpheresLeft()
 	{
-		vx -= 0.01;
-		SpheresInScene[0].center[0] -= 0.1;
-		SpheresInScene[1].center[0] -= 0.1;
-		SpheresInScene[2].center[0] -= 0.1;
+		SpheresInScene[0].center.V[0] -= 0.1;
+		SpheresInScene[1].center.V[0] -= 0.1;
+		SpheresInScene[2].center.V[0] -= 0.1;
 	}
 	void MoveSpheresRight()
 	{
-		vx += 0.01;
-		SpheresInScene[0].center[0] += 0.1;
-		SpheresInScene[1].center[0] += 0.1;
-		SpheresInScene[2].center[0] += 0.1;
+		SpheresInScene[0].center.V[0] += 0.1;
+		SpheresInScene[1].center.V[0] += 0.1;
+		SpheresInScene[2].center.V[0] += 0.1;
 	}
 	void Reset()
 	{
-		SpheresInScene[0].center[0] = 0;
-		SpheresInScene[1].center[0] = 2;
-		SpheresInScene[2].center[0] = -2;
-		SpheresInScene[0].center[1] = -1;
-		SpheresInScene[1].center[1] = 0;
-		SpheresInScene[2].center[1] = 0;
-		SpheresInScene[0].center[2] = 3;
-		SpheresInScene[1].center[2] = 4;
-		SpheresInScene[2].center[2] = 4;
+		SpheresInScene[0].center.V[0] = 0;
+		SpheresInScene[1].center.V[0] = 2;
+		SpheresInScene[2].center.V[0] = -2;
+		SpheresInScene[0].center.V[1] = -1;
+		SpheresInScene[1].center.V[1] = 0;
+		SpheresInScene[2].center.V[1] = 0;
+		SpheresInScene[0].center.V[2] = 3;
+		SpheresInScene[1].center.V[2] = 4;
+		SpheresInScene[2].center.V[2] = 4;
 	}
 
 	void SetLights(Light _L1, Light _L2, Light _L3, Light _L4)
 	{
-		L1 = _L1;
-		L2 = _L2;
-		L3 = _L3;
-		L4 = _L4;
+			L1 = _L1;
+			L2 = _L2;
+			L3 = _L3;
+			L4 = _L4;
 
 		LightsInScene[0] = L1;
 		LightsInScene[1] = L2;
@@ -344,6 +364,7 @@ public:
 private:
 	Sphere Sphere1, Sphere2, Sphere3, Sphere4;
 	Sphere SpheresInScene[4];
+	Sphere* closest_sphere;
 	Light L1, L2, L3, L4; 				
 	Light LightsInScene[4];	
 	Sprite s1_up;
@@ -355,9 +376,6 @@ private:
 	Sprite s4_up;
 	Sprite s4_down;
 	Light _L1, _L2, _L3, _L4; 
-	float vx = 0;
-	float vy = 0;
-	
 };
 
 
