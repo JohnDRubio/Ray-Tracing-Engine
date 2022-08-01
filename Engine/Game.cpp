@@ -43,23 +43,77 @@ void Game::UpdateModel()
 {
 	if (wnd.kbd.KeyIsPressed(VK_UP))
 	{
-		gfx.MoveSpheresUp();
+		if (wnd.kbd.KeyIsPressed('A'))
+			gfx.MoveSpheresUp(0);
+		else if (wnd.kbd.KeyIsPressed('S'))
+			gfx.MoveSpheresUp(2);
+		else if (wnd.kbd.KeyIsPressed('D'))
+			gfx.MoveSpheresUp(1);
+		else
+			gfx.MoveSpheresUp();
 	}
 	if (wnd.kbd.KeyIsPressed(VK_DOWN))
 	{
-		gfx.MoveSpheresDown();
+		if (wnd.kbd.KeyIsPressed('A'))
+			gfx.MoveSpheresDown(0);
+		else if (wnd.kbd.KeyIsPressed('S'))
+			gfx.MoveSpheresDown(2);
+		else if (wnd.kbd.KeyIsPressed('D'))
+			gfx.MoveSpheresDown(1);
+		else
+			gfx.MoveSpheresDown();
 	}
 	if (wnd.kbd.KeyIsPressed(VK_LEFT))			
 	{
-		gfx.MoveSpheresLeft();
+		if (wnd.kbd.KeyIsPressed('A'))
+			gfx.MoveSpheresLeft(0);
+		else if (wnd.kbd.KeyIsPressed('S'))
+			gfx.MoveSpheresLeft(2);
+		else if (wnd.kbd.KeyIsPressed('D'))
+			gfx.MoveSpheresLeft(1);
+		else
+			gfx.MoveSpheresLeft();
 	}
 	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
 	{
-		gfx.MoveSpheresRight();
+		if (wnd.kbd.KeyIsPressed('A'))
+			gfx.MoveSpheresRight(0);
+		else if (wnd.kbd.KeyIsPressed('S'))
+			gfx.MoveSpheresRight(2);
+		else if (wnd.kbd.KeyIsPressed('D'))
+			gfx.MoveSpheresRight(1);
+		else
+			gfx.MoveSpheresRight();
+	}
+	if (wnd.kbd.KeyIsPressed(VK_CONTROL))
+	{
+		if (wnd.kbd.KeyIsPressed('A'))
+			gfx.MoveSpheresCloser(0);
+		else if (wnd.kbd.KeyIsPressed('S'))
+			gfx.MoveSpheresCloser(2);
+		else if (wnd.kbd.KeyIsPressed('D'))
+			gfx.MoveSpheresCloser(1);
+		else
+			gfx.MoveSpheresCloser();
+	}
+	if (wnd.kbd.KeyIsPressed(VK_SHIFT))
+	{
+		if (wnd.kbd.KeyIsPressed('A'))
+			gfx.MoveSpheresBack(0);
+		else if (wnd.kbd.KeyIsPressed('S'))
+			gfx.MoveSpheresBack(2);
+		else if (wnd.kbd.KeyIsPressed('D'))
+			gfx.MoveSpheresBack(1);
+		else
+			gfx.MoveSpheresBack();
 	}
 	if (wnd.kbd.KeyIsPressed(VK_SPACE))
 	{
 		gfx.Reset();
+	}
+	if (wnd.mouse.LeftIsPressed())
+	{
+		gfx.MoveSphereWithMouse(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
 	}
 }
 

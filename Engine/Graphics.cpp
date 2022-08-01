@@ -54,6 +54,9 @@ Graphics::Graphics( HWNDKey& key ): Sphere1(), Sphere2(), Sphere3(), Sphere4(), 
 	s2_down.set(2, 0, 4, 0, 0, 255, 1, 500);
 	s3_up.set(-2, 2, 4, 0, 255, 0, 1, 10);
 	s3_down.set(-2, 0, 4, 0, 255, 0, 1, 10);
+
+
+																		
 	s4_up.set(0, -5001, 0, 255, 255, 0, 5000, 1000);
 	s4_down.set(0, -5001, 0, 255, 255, 0, 5000, 1000);
 
@@ -670,7 +673,7 @@ double Graphics::ComputeLighting(int index)
 				Vec3 R;
 				Vec3 V = -1 * D;
 
-				// R = 2 * N * <N,L> - L
+				// R = 2 * <N,L> * N - L
 				R = 2 * n_dot_L * Normal - L;
 
 				double r_dot_v = dot(R, V);

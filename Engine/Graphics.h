@@ -129,7 +129,7 @@ public:
 	}
 };
 
-class Sprite
+struct init
 {
 public:
 	int x;
@@ -141,7 +141,7 @@ public:
 	double radius = 1;
 	int specular = -1;
 
-	Sprite(class HWNDKey& key, int _x = 0, int _y = 0, int _z = 0, int _r = 0, int _g = 0, int _b = 0, double rad = 1, int s = -1)
+	init(class HWNDKey& key, int _x = 0, int _y = 0, int _z = 0, int _r = 0, int _g = 0, int _b = 0, double rad = 1, int s = -1)
 	{
 		x = _x;
 		y = _y;
@@ -251,14 +251,14 @@ public:
 	void TraceRay(double, double);
 	void IntersectRaySphere(int);
 	double ComputeLighting(int index);
-	int dot(int[], int[]);
-	double dot(double[], double[]);
-	double dot(double[], int[]);
+	//int dot(int[], int[]);
+	//double dot(double[], double[]);
+	//double dot(double[], int[]);
 	double dot(const Vec3&, const Vec3&);
-	void VecAdd(double[3], double[3], double c[3]);
-	void VecSub(double[3], double[3], double c[3]);
-	void scaleVec(double, double[3], double[3]);
-	double vecLength(double[3]);
+	//void VecAdd(double[3], double[3], double c[3]);
+	//void VecSub(double[3], double[3], double c[3]);
+	//void scaleVec(double, double[3], double[3]);
+	//double vecLength(double[3]);
 	double vecLength(const Vec3&);
 	void BoundPixelValues();
 	friend Vec3 operator+(const Vec3& lhs, const Vec3& rhs);
@@ -266,7 +266,7 @@ public:
 	friend Vec3 operator*(double s, const Vec3& rhs);
 	
 
-	void SetSpheres(Sprite s1, Sprite s2, Sprite s3, Sprite s4)
+	void SetSpheres(init s1, init s2, init s3, init s4)
 	{
 		Sphere1.center.V[0] = s1.x;
 		Sphere1.center.V[1] = s1.y;
@@ -335,6 +335,55 @@ public:
 		SpheresInScene[1].center.V[0] += 0.1;
 		SpheresInScene[2].center.V[0] += 0.1;
 	}
+	void MoveSpheresCloser()
+	{
+		SpheresInScene[0].center.V[2] += 0.1;
+		SpheresInScene[1].center.V[2] += 0.1;
+		SpheresInScene[2].center.V[2] += 0.1;
+	}							   
+	void MoveSpheresBack()		   
+	{							   
+		SpheresInScene[0].center.V[2] -= 0.1;
+		SpheresInScene[1].center.V[2] -= 0.1;
+		SpheresInScene[2].center.V[2] -= 0.1;
+	}
+	void MoveSpheresUp(int index)
+	{
+		SpheresInScene[index].center.V[1] += 0.1;
+		/*SpheresInScene[1].center.V[1] += 0.1;
+		SpheresInScene[2].center.V[1] += 0.1;*/
+	}	
+	
+	void MoveSpheresDown(int index)
+	{
+		SpheresInScene[index].center.V[1] -= 0.1;
+		/*SpheresInScene[1].center.V[1] -= 0.1;
+		SpheresInScene[2].center.V[1] -= 0.1;*/
+	}
+	void MoveSpheresLeft(int index)
+	{
+		SpheresInScene[index].center.V[0] -= 0.1;
+		/*SpheresInScene[1].center.V[0] -= 0.1;
+		SpheresInScene[2].center.V[0] -= 0.1;*/
+	}
+	void MoveSpheresRight(int index)
+	{
+		SpheresInScene[index].center.V[0] += 0.1;
+		/*SpheresInScene[1].center.V[0] += 0.1;
+		SpheresInScene[2].center.V[0] += 0.1;*/
+	}
+	void MoveSpheresCloser(int index)
+	{
+		SpheresInScene[index].center.V[2] += 0.1;
+		/*SpheresInScene[1].center.V[2] += 0.1;
+		SpheresInScene[2].center.V[2] += 0.1;*/
+	}
+	void MoveSpheresBack(int index)
+	{
+		SpheresInScene[index].center.V[2] -= 0.1;
+		/*SpheresInScene[1].center.V[2] -= 0.1;
+		SpheresInScene[2].center.V[2] -= 0.1;*/
+	}
 	void Reset()
 	{
 		SpheresInScene[0].center.V[0] = 0;
@@ -361,20 +410,66 @@ public:
 		LightsInScene[3] = L4;
 	}
 
+	// 2D distance
+	double distance(double x1, double y1, double x2, double y2)
+	{
+		return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+	}
+
+	// translate from chili coordinates to traditional
+	double translateX(double x)
+	{
+		return x - ScreenWidth / 2;
+	}
+	
+	// translate from chili coordinates to traditional
+	double translateY(double y)
+	{
+		return ScreenHeight / 2 - y;
+	}
+
+	// Returns index of closest sphere
+	int GetClosest(int x, int y)
+	{
+		int closest = 0;
+		int i = 0;
+		double temp = 0;
+		double dist = DBL_MAX;
+
+		for (; i < sizeof(SpheresInScene) / sizeof(SpheresInScene[0]); i++)
+		{
+			temp = distance(SpheresInScene[i].center.V[0], translateX(x), SpheresInScene[i].center.V[1], translateY(y));
+			if (temp < dist)
+			{
+				dist = temp;
+				closest = i;
+			}
+		}
+		return closest;
+	}
+
+	// Set closest sphere's (x,y) position to mouse position
+	void MoveSphereWithMouse(int mouseX, int mouseY)
+	{
+		int index = GetClosest(mouseX, mouseY);
+		SpheresInScene[0].center.V[0] = translateX(mouseX);
+		SpheresInScene[0].center.V[1] = translateY(mouseY);
+	}
+
 private:
 	Sphere Sphere1, Sphere2, Sphere3, Sphere4;
 	Sphere SpheresInScene[4];
 	Sphere* closest_sphere;
 	Light L1, L2, L3, L4; 				
 	Light LightsInScene[4];	
-	Sprite s1_up;
-	Sprite s1_down;
-	Sprite s2_up;
-	Sprite s2_down;
-	Sprite s3_up;
-	Sprite s3_down;
-	Sprite s4_up;
-	Sprite s4_down;
+	init s1_up;
+	init s1_down;
+	init s2_up;
+	init s2_down;
+	init s3_up;
+	init s3_down;
+	init s4_up;
+	init s4_down;
 	Light _L1, _L2, _L3, _L4; 
 };
 
