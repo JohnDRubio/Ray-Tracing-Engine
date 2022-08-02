@@ -337,15 +337,15 @@ public:
 	}
 	void MoveSpheresCloser()
 	{
-		SpheresInScene[0].center.V[2] += 0.1;
-		SpheresInScene[1].center.V[2] += 0.1;
-		SpheresInScene[2].center.V[2] += 0.1;
-	}							   
-	void MoveSpheresBack()		   
-	{							   
 		SpheresInScene[0].center.V[2] -= 0.1;
 		SpheresInScene[1].center.V[2] -= 0.1;
 		SpheresInScene[2].center.V[2] -= 0.1;
+	}							   
+	void MoveSpheresBack()		   
+	{							   
+		SpheresInScene[0].center.V[2] += 0.1;
+		SpheresInScene[1].center.V[2] += 0.1;
+		SpheresInScene[2].center.V[2] += 0.1;
 	}
 	void MoveSpheresUp(int index)
 	{
@@ -374,13 +374,13 @@ public:
 	}
 	void MoveSpheresCloser(int index)
 	{
-		SpheresInScene[index].center.V[2] += 0.1;
+		SpheresInScene[index].center.V[2] -= 0.1;
 		/*SpheresInScene[1].center.V[2] += 0.1;
 		SpheresInScene[2].center.V[2] += 0.1;*/
 	}
 	void MoveSpheresBack(int index)
 	{
-		SpheresInScene[index].center.V[2] -= 0.1;
+		SpheresInScene[index].center.V[2] += 0.1;
 		/*SpheresInScene[1].center.V[2] -= 0.1;
 		SpheresInScene[2].center.V[2] -= 0.1;*/
 	}
