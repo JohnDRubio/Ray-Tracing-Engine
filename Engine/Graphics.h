@@ -209,6 +209,11 @@ public:
 		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );
 	}
 	void PutPixel( int x,int y,Color c );
+	
+	void PutPixelRT(int x, int y)
+	{
+		PutPixel(Graphics::ScreenWidth / 2 + x, Graphics::ScreenHeight / 2 - y, COLORS.V[0], COLORS.V[1], COLORS.V[2]);
+	}
 
 	//void PutPixel2(int x, int y, int r, int g, int b)
 	//{
