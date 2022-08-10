@@ -210,22 +210,11 @@ public:
 	}
 	void PutPixel( int x,int y,Color c );
 	
-	void PutPixelRT(int x, int y)
+	void PutPixel(int x, int y)
 	{
 		PutPixel(Graphics::ScreenWidth / 2 + x, Graphics::ScreenHeight / 2 - y, COLORS.V[0], COLORS.V[1], COLORS.V[2]);
 	}
 
-	//void PutPixel2(int x, int y, int r, int g, int b)
-	//{
-	//	PutPixel2(x, y, { unsigned char(r),unsigned char(g),unsigned char(b) });
-	//}
-	//void PutPixel2(int x, int y, Color c);
-
-	//void PutPixel3(int x, int y, int r, int g, int b)
-	//{
-	//	PutPixel3(x, y, { 0,0,0 });
-	//}
-	//void PutPixel3(int x, int y, Color c);
 	~Graphics();
 
 private:
@@ -254,6 +243,8 @@ public:
 
 	void CanvasToViewport(int x, int y);
 	void TraceRay(double, double);
+	bool ClosestIntersection(Vec3&, Vec3&, double, double);
+	void IntersectRaySphere(Vec3&, Vec3&, int index);
 	void IntersectRaySphere(int);
 	double ComputeLighting(int index);
 	//int dot(int[], int[]);

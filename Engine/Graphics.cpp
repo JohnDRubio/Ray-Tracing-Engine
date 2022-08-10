@@ -539,6 +539,90 @@ void Graphics::BoundPixelValues()
 			COLORS.V[i] = 255;
 }
 
+//// Returns color of sphere that ray intersects
+//void Graphics::IntersectRaySphere(int index)
+//{
+//	MISS = 1;
+//	Vec3 CO;
+//	CO = CAMERA - SpheresInScene[index].center;
+//
+//	float r = SpheresInScene[index].radius;
+//	float a = dot(D, D);
+//	float b = 2*dot(CO, D);
+//	float c = dot(CO, CO) - r * r;
+//	float discriminant = b * b - 4 * a * c;
+//
+//	if (discriminant < 0) {
+//		INT_PTS[0] = INT_PTS[1] = INT_MAX;
+//		MISS = 1;
+//		return;
+//	}
+//
+//	else 
+//	{
+//		MISS = 0;
+//		INT_PTS[0] = (( - 1 * b + sqrt(discriminant)) / (2 * a));
+//		INT_PTS[1] = (( - 1 * b - sqrt(discriminant)) / (2 * a));
+//	}
+//}
+
+//void Graphics::TraceRay(double t_min, double t_max)
+//{
+//	closest_t = DBL_MAX;
+//	closest_sphere = NULL;
+//	intensity = 0.0;
+//
+//	// Compute pixel color
+//	for (int i = 0; i < 4; i++)		// If more spheres are added, replace 4 with sizeof(SpheresInScene) / sizeof(SpheresInScene[0])
+//	{
+//
+//		// Test if ray intersects Sphere[i]
+//		IntersectRaySphere(i);
+//
+//		if (!MISS)
+//		{
+//			if (INT_PTS[0] > t_min && INT_PTS[0] < t_max && INT_PTS[0] < closest_t) {
+//				closest_t = INT_PTS[0];
+//				closest_sphere = &SpheresInScene[i];
+//			}
+//
+//			if (INT_PTS[1] > t_min && INT_PTS[1] < t_max && INT_PTS[1] <= closest_t) {
+//				closest_t = INT_PTS[1];
+//				closest_sphere = &SpheresInScene[i];
+//			}
+//
+//			if (closest_t != DBL_MAX && closest_t >= 1)
+//			{
+//				// This condition accounts for case of more than one sphere being intersected
+//				if ((INT_PTS[0] > t_min && INT_PTS[0] < t_max && INT_PTS[0] <= closest_t) || (INT_PTS[1] > t_min && INT_PTS[1] < t_max && INT_PTS[1] <= closest_t))
+//				{					
+//					// Set P = O + t * D
+//					P = CAMERA + closest_t * D;
+//
+//					if (INT_PTS[0] <= closest_t || INT_PTS[1] <= closest_t)
+//					{
+//						// Shading
+//						intensity = ComputeLighting(i);
+//						COLORS = intensity * closest_sphere->color;
+//
+//						// Bound pixel values
+//						BoundPixelValues();
+//					}
+//				}
+//			}
+//		}
+//		else 
+//		{
+//			if (closest_sphere == NULL) 
+//			{
+//				COLORS.V[0] = 255;
+//				COLORS.V[1] = 255;
+//				COLORS.V[2] = 255;
+//			}
+//		}
+//	}
+//}
+
 // Returns color of sphere that ray intersects
 void Graphics::IntersectRaySphere(int index)
 {
@@ -550,6 +634,32 @@ void Graphics::IntersectRaySphere(int index)
 	float a = dot(D, D);
 	float b = 2*dot(CO, D);
 	float c = dot(CO, CO) - r * r;
+	float discriminant = b * b - 4 * a * c;
+
+	if (discriminant < 0) {
+		INT_PTS[0] = INT_PTS[1] = INT_MAX;
+		MISS = 1;
+		return;
+	}
+
+	else 
+	{
+		MISS = 0;
+		INT_PTS[0] = (( - 1 * b + sqrt(discriminant)) / (2 * a));
+		INT_PTS[1] = (( - 1 * b - sqrt(discriminant)) / (2 * a));
+	}
+}
+
+void Graphics::IntersectRaySphere(Vec3& P, Vec3& L, int index)
+{
+	MISS = 1;
+	Vec3 CP;
+	CP = P - SpheresInScene[index].center;
+
+	float r = SpheresInScene[index].radius;
+	float a = dot(L, L);
+	float b = 2*dot(CP, L);
+	float c = dot(CP, CP) - r * r;
 	float discriminant = b * b - 4 * a * c;
 
 	if (discriminant < 0) {
@@ -623,15 +733,74 @@ void Graphics::TraceRay(double t_min, double t_max)
 	}
 }
 
+
+bool Graphics::ClosestIntersection(Vec3& P, Vec3& L, double t_min, double t_max)
+{
+	double closest_t2 = DBL_MAX;
+	Sphere* closest_sphere2 = NULL;
+
+	for (int i = 0; i < 4; i++)		// If more spheres are added, replace 4 with sizeof(SpheresInScene) / sizeof(SpheresInScene[0])
+	{
+
+		// Test if ray intersects Sphere[i]
+		IntersectRaySphere(P, L, i);
+
+		if (!MISS)
+		{
+			if (INT_PTS[0] > t_min && INT_PTS[0] < t_max && INT_PTS[0] < closest_t2) {
+				closest_t2 = INT_PTS[0];
+				closest_sphere2 = &SpheresInScene[i];
+			}
+
+			if (INT_PTS[1] > t_min && INT_PTS[1] < t_max && INT_PTS[1] <= closest_t2) {
+				closest_t2 = INT_PTS[1];
+				closest_sphere2 = &SpheresInScene[i];
+			}
+
+			//	if (closest_t != DBL_MAX && closest_t >= 1)
+			//	{
+			//		// This condition accounts for case of more than one sphere being intersected
+			//		if ((INT_PTS[0] > t_min && INT_PTS[0] < t_max && INT_PTS[0] <= closest_t) || (INT_PTS[1] > t_min && INT_PTS[1] < t_max && INT_PTS[1] <= closest_t))
+			//		{
+			//			// Set P = O + t * D
+			//			P = CAMERA + closest_t * D;
+
+			//			if (INT_PTS[0] <= closest_t || INT_PTS[1] <= closest_t)
+			//			{
+			//				// Shading
+			//				intensity = ComputeLighting(i);
+			//				COLORS = intensity * closest_sphere->color;
+
+			//				// Bound pixel values
+			//				BoundPixelValues();
+			//			}
+			//		}
+			//	}
+			//}
+			//else
+			//{
+			if (closest_sphere2 == NULL)
+			{
+				return false;
+			}
+			return true;
+			//}
+		}
+
+
+	}
+}
+
 // Compute Lighting
 double Graphics::ComputeLighting(int index)
 {
 	// Initialize values
-	double length_P_minus_C;
+	double length_P_minus_C, t_max;
 	Vec3 L;
 	Vec3 P_Minus_C;
 	Vec3 Normal;
 	intensity = 0;
+	t_max = DBL_MAX;
 
 
 	// Set P_minus_C
@@ -652,14 +821,19 @@ double Graphics::ComputeLighting(int index)
 			if (LightsInScene[i].type == Light::LTYPE::point)
 			{
 				L = LightsInScene[i].POSITION - P;
+				t_max = 1;
 			}
 			else
 			{
 				if (LightsInScene[i].type == Light::LTYPE::directional)
 				{
 					L = LightsInScene[i].DIRECTION;
+					t_max = DBL_MAX;
 				}
 			}
+
+			if (ClosestIntersection(P, L, 0.001, t_max))
+				continue;
 
 			double n_dot_L = dot(Normal, L);
 

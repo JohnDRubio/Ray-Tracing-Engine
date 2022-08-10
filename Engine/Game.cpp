@@ -131,7 +131,7 @@ void Game::ComposeFrame()
 			{
 				gfx.CanvasToViewport(x, y);
 				gfx.TraceRay(1, DBL_MAX);
-				gfx.PutPixelRT(x, y);			// Wrapper function for chili PutPixel()
+				gfx.PutPixel(x, y);			// Wrapper function for chili PutPixel()
 			}
 		}
 }
