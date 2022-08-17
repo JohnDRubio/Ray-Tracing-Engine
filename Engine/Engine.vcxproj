@@ -169,10 +169,13 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="Init.h" />
     <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="Vec3.h" />
   </ItemGroup>
   <ItemGroup>

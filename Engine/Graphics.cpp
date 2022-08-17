@@ -832,6 +832,7 @@ double Graphics::ComputeLighting(int index)
 				}
 			}
 
+			// Test whether there is an object between the point, P, and the light source
 			if (ClosestIntersection(P, L, 0.001, t_max))
 				continue;
 

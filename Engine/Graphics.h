@@ -24,147 +24,12 @@
 #include "ChiliException.h"
 #include "Colors.h"
 #include "Vec3.h"
+#include "Light.h"
+#include "Sphere.h"
+#include "Init.h"
 #include <vector>
 #include <string>
 using namespace std;
-
-class Light {
-public:
-	enum LTYPE { ambient, point, directional };
-	LTYPE type;
-	double intensity;
-	Vec3 DIRECTION;
-	Vec3 POSITION;
-
-	Light(LTYPE t = ambient, double i = 1, double d1 = 0, double d2 = 0, double d3 = 0, double p1 = 0, double p2 = 0, double p3 = 0)
-	{
-		type = t;
-		intensity = i;
-		DIRECTION.V[0] = d1;
-		DIRECTION.V[1] = d2;
-		DIRECTION.V[2] = d3;
-		POSITION.V[0] = p1;
-		POSITION.V[1] = p2;
-		POSITION.V[2] = p3;
-	}
-
-	Light (const Light& L)
-	{
-		type = L.type;
-		intensity = L.intensity;
-
-		for (int i = 0; i < 3; i++)
-		{
-			DIRECTION.V[i] = L.DIRECTION.V[i];
-			POSITION.V[i] = L.POSITION.V[i];
-		}
-	}
-
-	Light& operator=(const Light& lhs)
-	{
-		if (this != &lhs)
-		{
-			type = lhs.type;
-			intensity = lhs.intensity;
-
-			for (int i = 0; i < 3; i++)
-			{
-				DIRECTION.V[i] = lhs.DIRECTION.V[i];
-				POSITION.V[i] = lhs.POSITION.V[i];
-			}
-		}
-		return *this;
-	}
-
-	void set(LTYPE t = ambient, double i = 1, double d1 = 0, double d2 = 0, double d3 = 0, double p1 = 0, double p2 = 0, double p3 = 0)
-	{
-		type = t;
-		intensity = i;
-		DIRECTION.V[0] = d1;
-		DIRECTION.V[1] = d2;
-		DIRECTION.V[2] = d3;
-		POSITION.V[0] = p1;
-		POSITION.V[1] = p2;
-		POSITION.V[2] = p3;
-	}
-};
-
-class Sphere {
-public:
-	Vec3 center;
-	Vec3 color;
-	double radius = 1;
-	int specular = -1;
-
-	/*void CenterToOrigin()
-	{
-		center[0] = center[1] = center[2] = 0;
-	}*/
-	void noColor()
-	{
-		color.V[0] = color.V[1] = color.V[2] = 0;
-	}
-
-	Sphere(int x = 0, int y = 0, int z = 0, int r = 0, int g = 0, int b = 0, double rad = 1, int s = -1)
-	{
-		center.V[0] = x;
-		center.V[1] = y;
-		center.V[2] = z;
-		color.V[0] = r;
-		color.V[1] = g;
-		color.V[2] = b;
-		radius = rad;
-		specular = s;
-	}
-
-	Sphere(const Sphere& sphere)
-	{
-		radius = sphere.radius;
-		specular = sphere.specular;
-		for (int i = 0; i < 3; i++)
-		{
-			center.V[i] = sphere.center.V[i];
-			color.V[i] = sphere.color.V[i];
-		}
-	}
-};
-
-struct init
-{
-public:
-	int x;
-	int y;
-	int z; 
-	int r;
-	int g;
-	int b;
-	double radius = 1;
-	int specular = -1;
-
-	init(class HWNDKey& key, int _x = 0, int _y = 0, int _z = 0, int _r = 0, int _g = 0, int _b = 0, double rad = 1, int s = -1)
-	{
-		x = _x;
-		y = _y;
-		z = _z;
-		r = _r;
-		g = _g;	
-		b = _b;
-		radius = rad;
-		specular = s;
-	}
-
-	void set(int _x = 0, int _y = 0, int _z = 0, int _r = 0, int _g = 0, int _b = 0, double rad = 1, int s = -1)
-	{
-		x = _x;
-		y = _y;
-		z = _z;
-		r = _r;
-		g = _g;
-		b = _b;
-		radius = rad;
-		specular = s;
-	}
-};
 
 class Graphics
 {
@@ -175,10 +40,6 @@ public:
 	Vec3 COLORS;
 	double INT_PTS[2]{};
 	bool MISS = 1;
-	
-
-	friend Sphere;
-	friend Light;
 
 	class Exception : public ChiliException
 	{
@@ -235,26 +96,14 @@ private:
 public:
 	static constexpr int ScreenWidth = 800;
 	static constexpr int ScreenHeight = 600;
-	/*bool inhibitUp = false;
-	bool inhibitDown = false;
-	bool inhibitLeft = false;
-	bool inhibitRight = false;*/
 	float intensity, closest_t;
-
 	void CanvasToViewport(int x, int y);
 	void TraceRay(double, double);
 	bool ClosestIntersection(Vec3&, Vec3&, double, double);
 	void IntersectRaySphere(Vec3&, Vec3&, int index);
 	void IntersectRaySphere(int);
 	double ComputeLighting(int index);
-	//int dot(int[], int[]);
-	//double dot(double[], double[]);
-	//double dot(double[], int[]);
 	double dot(const Vec3&, const Vec3&);
-	//void VecAdd(double[3], double[3], double c[3]);
-	//void VecSub(double[3], double[3], double c[3]);
-	//void scaleVec(double, double[3], double[3]);
-	//double vecLength(double[3]);
 	double vecLength(const Vec3&);
 	void BoundPixelValues();
 	friend Vec3 operator+(const Vec3& lhs, const Vec3& rhs);
@@ -346,39 +195,27 @@ public:
 	void MoveSpheresUp(int index)
 	{
 		SpheresInScene[index].center.V[1] += 0.1;
-		/*SpheresInScene[1].center.V[1] += 0.1;
-		SpheresInScene[2].center.V[1] += 0.1;*/
 	}	
 	
 	void MoveSpheresDown(int index)
 	{
 		SpheresInScene[index].center.V[1] -= 0.1;
-		/*SpheresInScene[1].center.V[1] -= 0.1;
-		SpheresInScene[2].center.V[1] -= 0.1;*/
 	}
 	void MoveSpheresLeft(int index)
 	{
 		SpheresInScene[index].center.V[0] -= 0.1;
-		/*SpheresInScene[1].center.V[0] -= 0.1;
-		SpheresInScene[2].center.V[0] -= 0.1;*/
 	}
 	void MoveSpheresRight(int index)
 	{
 		SpheresInScene[index].center.V[0] += 0.1;
-		/*SpheresInScene[1].center.V[0] += 0.1;
-		SpheresInScene[2].center.V[0] += 0.1;*/
 	}
 	void MoveSpheresCloser(int index)
 	{
 		SpheresInScene[index].center.V[2] -= 0.1;
-		/*SpheresInScene[1].center.V[2] += 0.1;
-		SpheresInScene[2].center.V[2] += 0.1;*/
 	}
 	void MoveSpheresBack(int index)
 	{
 		SpheresInScene[index].center.V[2] += 0.1;
-		/*SpheresInScene[1].center.V[2] -= 0.1;
-		SpheresInScene[2].center.V[2] -= 0.1;*/
 	}
 	void Reset()
 	{
@@ -424,33 +261,33 @@ public:
 		return ScreenHeight / 2 - y;
 	}
 
-	// Returns index of closest sphere
-	int GetClosest(int x, int y)
-	{
-		int closest = 0;
-		int i = 0;
-		double temp = 0;
-		double dist = DBL_MAX;
+	//// Returns index of closest sphere
+	//int GetClosest(int x, int y)
+	//{
+	//	int closest = 0;
+	//	int i = 0;
+	//	double temp = 0;
+	//	double dist = DBL_MAX;
 
-		for (; i < sizeof(SpheresInScene) / sizeof(SpheresInScene[0]); i++)
-		{
-			temp = distance(SpheresInScene[i].center.V[0], translateX(x), SpheresInScene[i].center.V[1], translateY(y));
-			if (temp < dist)
-			{
-				dist = temp;
-				closest = i;
-			}
-		}
-		return closest;
-	}
+	//	for (; i < sizeof(SpheresInScene) / sizeof(SpheresInScene[0]); i++)
+	//	{
+	//		temp = distance(SpheresInScene[i].center.V[0], translateX(x), SpheresInScene[i].center.V[1], translateY(y));
+	//		if (temp < dist)
+	//		{
+	//			dist = temp;
+	//			closest = i;
+	//		}
+	//	}
+	//	return closest;
+	//}
 
-	// Set closest sphere's (x,y) position to mouse position
-	void MoveSphereWithMouse(int mouseX, int mouseY)
-	{
-		int index = GetClosest(mouseX, mouseY);
-		SpheresInScene[0].center.V[0] = translateX(mouseX);
-		SpheresInScene[0].center.V[1] = translateY(mouseY);
-	}
+	//// Set closest sphere's (x,y) position to mouse position
+	//void MoveSphereWithMouse(int mouseX, int mouseY)
+	//{
+	//	int index = GetClosest(mouseX, mouseY);
+	//	SpheresInScene[0].center.V[0] = translateX(mouseX);
+	//	SpheresInScene[0].center.V[1] = translateY(mouseY);
+	//}
 
 private:
 	Sphere Sphere1, Sphere2, Sphere3, Sphere4;
@@ -468,5 +305,3 @@ private:
 	init s4_down;
 	Light _L1, _L2, _L3, _L4; 
 };
-
-
