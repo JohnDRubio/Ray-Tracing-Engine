@@ -342,35 +342,6 @@ void Graphics::PutPixel( int x,int y,Color c )
 	pSysBuffer[Graphics::ScreenWidth * y + x] = c;
 }
 
-//void Graphics::PutPixel2(int x, int y, Color c)
-//{
-//	//assert(x >= 0);
-//	//assert(x < int(Graphics::ScreenWidth));
-//	//assert(y >= 0);
-//	//assert(y < int(Graphics::ScreenHeight)); 
-//
-//	// translate origin to center
-//	x = 400 + x;
-//	y = 300 - y;
-//
-//	pSysBuffer[Graphics::ScreenWidth * y + x] = c;
-//
-//}
-
-//void Graphics::PutPixel3(int x, int y, Color c)
-//{
-//	//assert(x >= 0);
-//	//assert(x < int(Graphics::ScreenWidth));
-//	//assert(y >= 0);
-//	//assert(y < int(Graphics::ScreenHeight)); 
-//
-//	// translate origin to center
-//	x = 400 + x;
-//	y = 300 - y;
-//
-//	pSysBuffer[Graphics::ScreenWidth * y + x] = c;
-//}
-
 //////////////////////////////////////////////////
 //           Graphics Exception
 Graphics::Exception::Exception( HRESULT hr,const std::wstring& note,const wchar_t* file,unsigned int line )
@@ -413,10 +384,6 @@ std::wstring Graphics::Exception::GetExceptionType() const
 	return L"Chili Graphics Exception";
 }
 
-// Viewport parameters
-const int ViewportHeight = 1;
-const int ViewportWidth = 1;
-
 // Gives direction of ray 
 void Graphics::CanvasToViewport(int x, int y)
 {
@@ -425,105 +392,143 @@ void Graphics::CanvasToViewport(int x, int y)
 	D.V[2] = 1;
 }
 
-//// 3d dot product
-//int Graphics::dot(int a[], int b[])
-//{
-//	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-//}
-//
-//// 3d dot product
-//double Graphics::dot(double a[], double b[])
-//{
-//	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-//}
-//
-//// 3d dot product
-//double Graphics::dot(double a[], int b[])
-//{
-//	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-//}
+void Graphics::SetSpheres(init s1, init s2, init s3, init s4)
+{
+	Sphere1.center.V[0] = s1.x;
+	Sphere1.center.V[1] = s1.y;
+	Sphere1.center.V[2] = s1.z;
+	Sphere1.color.V[0] = s1.r;
+	Sphere1.color.V[1] = s1.g;
+	Sphere1.color.V[2] = s1.b;
+	Sphere1.radius = s1.radius;
+	Sphere1.specular = s1.specular;
+
+	Sphere2.center.V[0] = s2.x;
+	Sphere2.center.V[1] = s2.y;
+	Sphere2.center.V[2] = s2.z;
+	Sphere2.color.V[0] = s2.r;
+	Sphere2.color.V[1] = s2.g;
+	Sphere2.color.V[2] = s2.b;
+	Sphere2.radius = s2.radius;
+	Sphere2.specular = s2.specular;
+
+	Sphere3.center.V[0] = s3.x;
+	Sphere3.center.V[1] = s3.y;
+	Sphere3.center.V[2] = s3.z;
+	Sphere3.color.V[0] = s3.r;
+	Sphere3.color.V[1] = s3.g;
+	Sphere3.color.V[2] = s3.b;
+	Sphere3.radius = s3.radius;
+	Sphere3.specular = s3.specular;
+
+	Sphere4.center.V[0] = s4.x;
+	Sphere4.center.V[1] = s4.y;
+	Sphere4.center.V[2] = s4.z;
+	Sphere4.color.V[0] = s4.r;
+	Sphere4.color.V[1] = s4.g;
+	Sphere4.color.V[2] = s4.b;
+	Sphere4.radius = s4.radius;
+	Sphere4.specular = s4.specular;
+
+	SpheresInScene[0] = Sphere1;
+	SpheresInScene[1] = Sphere2;
+	SpheresInScene[2] = Sphere3;
+	SpheresInScene[3] = Sphere4;
+}
+
+void Graphics::MoveSpheresUp()
+{
+	SpheresInScene[0].center.V[1] += 0.1;
+	SpheresInScene[1].center.V[1] += 0.1;
+	SpheresInScene[2].center.V[1] += 0.1;
+}
+
+void Graphics::MoveSpheresDown()
+{
+	SpheresInScene[0].center.V[1] -= 0.1;
+	SpheresInScene[1].center.V[1] -= 0.1;
+	SpheresInScene[2].center.V[1] -= 0.1;
+}
+void Graphics::MoveSpheresLeft()
+{
+	SpheresInScene[0].center.V[0] -= 0.1;
+	SpheresInScene[1].center.V[0] -= 0.1;
+	SpheresInScene[2].center.V[0] -= 0.1;
+}
+void Graphics::MoveSpheresRight()
+{
+	SpheresInScene[0].center.V[0] += 0.1;
+	SpheresInScene[1].center.V[0] += 0.1;
+	SpheresInScene[2].center.V[0] += 0.1;
+}
+void Graphics::MoveSpheresCloser()
+{
+	SpheresInScene[0].center.V[2] -= 0.1;
+	SpheresInScene[1].center.V[2] -= 0.1;
+	SpheresInScene[2].center.V[2] -= 0.1;
+}
+void Graphics::MoveSpheresBack()
+{
+	SpheresInScene[0].center.V[2] += 0.1;
+	SpheresInScene[1].center.V[2] += 0.1;
+	SpheresInScene[2].center.V[2] += 0.1;
+}
+void Graphics::MoveSpheresUp(int index)
+{
+	SpheresInScene[index].center.V[1] += 0.1;
+}
+
+void Graphics::MoveSpheresDown(int index)
+{
+	SpheresInScene[index].center.V[1] -= 0.1;
+}
+void Graphics::MoveSpheresLeft(int index)
+{
+	SpheresInScene[index].center.V[0] -= 0.1;
+}
+void Graphics::MoveSpheresRight(int index)
+{
+	SpheresInScene[index].center.V[0] += 0.1;
+}
+void Graphics::MoveSpheresCloser(int index)
+{
+	SpheresInScene[index].center.V[2] -= 0.1;
+}
+void Graphics::MoveSpheresBack(int index)
+{
+	SpheresInScene[index].center.V[2] += 0.1;
+}
+void Graphics::Reset()
+{
+	SpheresInScene[0].center.V[0] = 0;
+	SpheresInScene[1].center.V[0] = 2;
+	SpheresInScene[2].center.V[0] = -2;
+	SpheresInScene[0].center.V[1] = -1;
+	SpheresInScene[1].center.V[1] = 0;
+	SpheresInScene[2].center.V[1] = 0;
+	SpheresInScene[0].center.V[2] = 3;
+	SpheresInScene[1].center.V[2] = 4;
+	SpheresInScene[2].center.V[2] = 4;
+}
+
+void Graphics::SetLights(Light _L1, Light _L2, Light _L3, Light _L4)
+{
+	L1 = _L1;
+	L2 = _L2;
+	L3 = _L3;
+	L4 = _L4;
+
+	LightsInScene[0] = L1;
+	LightsInScene[1] = L2;
+	LightsInScene[2] = L3;
+	LightsInScene[3] = L4;
+}
 
 // 3d dot product
-double Graphics::dot(const Vec3& lhs, const Vec3& rhs)
+double Graphics::Graphics::dot(const Vec3& lhs, const Vec3& rhs)
 {
 	return lhs.V[0] * rhs.V[0] + lhs.V[1] * rhs.V[1] + lhs.V[2] * rhs.V[2];
 }
-
-// Vector addition
-Vec3 operator+(const Vec3& lhs, const Vec3& rhs)
-{
-	Vec3 res;
-	res.V[0] = lhs.V[0] + rhs.V[0];
-	res.V[1] = lhs.V[1] + rhs.V[1];
-	res.V[2] = lhs.V[2] + rhs.V[2];
-	return  res;
-}
-
-// Vector subtraction
-Vec3 operator-(const Vec3& lhs, const Vec3& rhs)
-{
-	Vec3 res;
-	res.V[0] = lhs.V[0] - rhs.V[0];
-	res.V[1] = lhs.V[1] - rhs.V[1];
-	res.V[2] = lhs.V[2] - rhs.V[2];
-	return  res;
-}
-
-// Scalar * Vector
-Vec3 operator*(double s, const Vec3& rhs)
-{
-	Vec3 res;
-	res.V[0] = s * rhs.V[0];
-	res.V[1] = s * rhs.V[1];
-	res.V[2] = s * rhs.V[2];
-	return  res;
-}
-
-// Vector assignment
-Vec3& Vec3::operator=(const Vec3& rhs)
-{
-	if (this != &rhs)
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			V[i] = rhs.V[i];
-		}
-		return *this;
-	}
-	else
-		return *this;
-}
-
-// 3d vector addition
-//void Graphics::VecAdd(double a[3], double b[3], double c[3])		// Replaced with operator overload '+' for Vec3 class
-//{
-//	c[0] = a[0] + b[0];
-//	c[1] = a[1] + b[1];
-//	c[2] = a[2] + b[2];
-//
-//}
-//
-//// 3d vector subtraction
-//void Graphics::VecSub(double a[3], double b[3], double c[3])		// Replaced with operator overload '-' for Vec3 class
-//{
-//	c[0] = a[0] - b[0];
-//	c[1] = a[1] - b[1];
-//	c[2] = a[2] - b[2];
-//}
-//
-//// scalar * vector
-//void Graphics::scaleVec(double s, double a[3], double b[3])			// Replaced with operator overload '*' for Vec3 class with scalars
-//{
-//	b[0] = s * a[0];
-//	b[1] = s * a[1];
-//	b[2] = s * a[2];
-//}
-//
-//// Magnitude
-//double Graphics::vecLength(double a[3])
-//{
-//	return (sqrt(dot(a, a)));
-//}
 
 // Magnitude
 double Graphics::vecLength(const Vec3& v)
@@ -538,90 +543,6 @@ void Graphics::BoundPixelValues()
 		if (COLORS.V[i] > 255)
 			COLORS.V[i] = 255;
 }
-
-//// Returns color of sphere that ray intersects
-//void Graphics::IntersectRaySphere(int index)
-//{
-//	MISS = 1;
-//	Vec3 CO;
-//	CO = CAMERA - SpheresInScene[index].center;
-//
-//	float r = SpheresInScene[index].radius;
-//	float a = dot(D, D);
-//	float b = 2*dot(CO, D);
-//	float c = dot(CO, CO) - r * r;
-//	float discriminant = b * b - 4 * a * c;
-//
-//	if (discriminant < 0) {
-//		INT_PTS[0] = INT_PTS[1] = INT_MAX;
-//		MISS = 1;
-//		return;
-//	}
-//
-//	else 
-//	{
-//		MISS = 0;
-//		INT_PTS[0] = (( - 1 * b + sqrt(discriminant)) / (2 * a));
-//		INT_PTS[1] = (( - 1 * b - sqrt(discriminant)) / (2 * a));
-//	}
-//}
-
-//void Graphics::TraceRay(double t_min, double t_max)
-//{
-//	closest_t = DBL_MAX;
-//	closest_sphere = NULL;
-//	intensity = 0.0;
-//
-//	// Compute pixel color
-//	for (int i = 0; i < 4; i++)		// If more spheres are added, replace 4 with sizeof(SpheresInScene) / sizeof(SpheresInScene[0])
-//	{
-//
-//		// Test if ray intersects Sphere[i]
-//		IntersectRaySphere(i);
-//
-//		if (!MISS)
-//		{
-//			if (INT_PTS[0] > t_min && INT_PTS[0] < t_max && INT_PTS[0] < closest_t) {
-//				closest_t = INT_PTS[0];
-//				closest_sphere = &SpheresInScene[i];
-//			}
-//
-//			if (INT_PTS[1] > t_min && INT_PTS[1] < t_max && INT_PTS[1] <= closest_t) {
-//				closest_t = INT_PTS[1];
-//				closest_sphere = &SpheresInScene[i];
-//			}
-//
-//			if (closest_t != DBL_MAX && closest_t >= 1)
-//			{
-//				// This condition accounts for case of more than one sphere being intersected
-//				if ((INT_PTS[0] > t_min && INT_PTS[0] < t_max && INT_PTS[0] <= closest_t) || (INT_PTS[1] > t_min && INT_PTS[1] < t_max && INT_PTS[1] <= closest_t))
-//				{					
-//					// Set P = O + t * D
-//					P = CAMERA + closest_t * D;
-//
-//					if (INT_PTS[0] <= closest_t || INT_PTS[1] <= closest_t)
-//					{
-//						// Shading
-//						intensity = ComputeLighting(i);
-//						COLORS = intensity * closest_sphere->color;
-//
-//						// Bound pixel values
-//						BoundPixelValues();
-//					}
-//				}
-//			}
-//		}
-//		else 
-//		{
-//			if (closest_sphere == NULL) 
-//			{
-//				COLORS.V[0] = 255;
-//				COLORS.V[1] = 255;
-//				COLORS.V[2] = 255;
-//			}
-//		}
-//	}
-//}
 
 // Returns color of sphere that ray intersects
 void Graphics::IntersectRaySphere(int index)
@@ -733,7 +654,6 @@ void Graphics::TraceRay(double t_min, double t_max)
 	}
 }
 
-
 bool Graphics::ClosestIntersection(Vec3& P, Vec3& L, double t_min, double t_max)
 {
 	double closest_t2 = DBL_MAX;
@@ -756,38 +676,12 @@ bool Graphics::ClosestIntersection(Vec3& P, Vec3& L, double t_min, double t_max)
 				closest_t2 = INT_PTS[1];
 				closest_sphere2 = &SpheresInScene[i];
 			}
-
-			//	if (closest_t != DBL_MAX && closest_t >= 1)
-			//	{
-			//		// This condition accounts for case of more than one sphere being intersected
-			//		if ((INT_PTS[0] > t_min && INT_PTS[0] < t_max && INT_PTS[0] <= closest_t) || (INT_PTS[1] > t_min && INT_PTS[1] < t_max && INT_PTS[1] <= closest_t))
-			//		{
-			//			// Set P = O + t * D
-			//			P = CAMERA + closest_t * D;
-
-			//			if (INT_PTS[0] <= closest_t || INT_PTS[1] <= closest_t)
-			//			{
-			//				// Shading
-			//				intensity = ComputeLighting(i);
-			//				COLORS = intensity * closest_sphere->color;
-
-			//				// Bound pixel values
-			//				BoundPixelValues();
-			//			}
-			//		}
-			//	}
-			//}
-			//else
-			//{
 			if (closest_sphere2 == NULL)
 			{
 				return false;
 			}
 			return true;
-			//}
 		}
-
-
 	}
 }
 

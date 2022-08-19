@@ -96,7 +96,10 @@ private:
 public:
 	static constexpr int ScreenWidth = 800;
 	static constexpr int ScreenHeight = 600;
-	float intensity, closest_t;
+	static constexpr int ViewportHeight = 1;
+	static constexpr int ViewportWidth = 1;
+	float intensity;							// color intensity
+	float closest_t;							// time of closest intersection
 	void CanvasToViewport(int x, int y);
 	void TraceRay(double, double);
 	bool ClosestIntersection(Vec3&, Vec3&, double, double);
@@ -106,188 +109,21 @@ public:
 	double dot(const Vec3&, const Vec3&);
 	double vecLength(const Vec3&);
 	void BoundPixelValues();
-	friend Vec3 operator+(const Vec3& lhs, const Vec3& rhs);
-	friend Vec3 operator-(const Vec3& lhs, const Vec3& rhs);
-	friend Vec3 operator*(double s, const Vec3& rhs);
-	
-
-	void SetSpheres(init s1, init s2, init s3, init s4)
-	{
-		Sphere1.center.V[0] = s1.x;
-		Sphere1.center.V[1] = s1.y;
-		Sphere1.center.V[2] = s1.z;
-		Sphere1.color.V[0] = s1.r;
-		Sphere1.color.V[1] = s1.g;
-		Sphere1.color.V[2] = s1.b;
-		Sphere1.radius = s1.radius;
-		Sphere1.specular = s1.specular;
-
-		Sphere2.center.V[0] = s2.x;
-		Sphere2.center.V[1] = s2.y;
-		Sphere2.center.V[2] = s2.z;
-		Sphere2.color.V[0] = s2.r;
-		Sphere2.color.V[1] = s2.g;
-		Sphere2.color.V[2] = s2.b;
-		Sphere2.radius = s2.radius;
-		Sphere2.specular = s2.specular;
-
-		Sphere3.center.V[0] = s3.x;
-		Sphere3.center.V[1] = s3.y;
-		Sphere3.center.V[2] = s3.z;
-		Sphere3.color.V[0] = s3.r;
-		Sphere3.color.V[1] = s3.g;
-		Sphere3.color.V[2] = s3.b;
-		Sphere3.radius = s3.radius;
-		Sphere3.specular = s3.specular;
-
-		Sphere4.center.V[0] = s4.x;
-		Sphere4.center.V[1] = s4.y;
-		Sphere4.center.V[2] = s4.z;
-		Sphere4.color.V[0] = s4.r;
-		Sphere4.color.V[1] = s4.g;
-		Sphere4.color.V[2] = s4.b;
-		Sphere4.radius = s4.radius;
-		Sphere4.specular = s4.specular;
-
-		SpheresInScene[0] = Sphere1;
-		SpheresInScene[1] = Sphere2;
-		SpheresInScene[2] = Sphere3;
-		SpheresInScene[3] = Sphere4;
-	}
-
-	void MoveSpheresUp()
-	{
-		SpheresInScene[0].center.V[1] += 0.1;
-		SpheresInScene[1].center.V[1] += 0.1;
-		SpheresInScene[2].center.V[1] += 0.1;
-	}	
-	
-	void MoveSpheresDown()
-	{
-		SpheresInScene[0].center.V[1] -= 0.1;
-		SpheresInScene[1].center.V[1] -= 0.1;
-		SpheresInScene[2].center.V[1] -= 0.1;
-	}
-	void MoveSpheresLeft()
-	{
-		SpheresInScene[0].center.V[0] -= 0.1;
-		SpheresInScene[1].center.V[0] -= 0.1;
-		SpheresInScene[2].center.V[0] -= 0.1;
-	}
-	void MoveSpheresRight()
-	{
-		SpheresInScene[0].center.V[0] += 0.1;
-		SpheresInScene[1].center.V[0] += 0.1;
-		SpheresInScene[2].center.V[0] += 0.1;
-	}
-	void MoveSpheresCloser()
-	{
-		SpheresInScene[0].center.V[2] -= 0.1;
-		SpheresInScene[1].center.V[2] -= 0.1;
-		SpheresInScene[2].center.V[2] -= 0.1;
-	}							   
-	void MoveSpheresBack()		   
-	{							   
-		SpheresInScene[0].center.V[2] += 0.1;
-		SpheresInScene[1].center.V[2] += 0.1;
-		SpheresInScene[2].center.V[2] += 0.1;
-	}
-	void MoveSpheresUp(int index)
-	{
-		SpheresInScene[index].center.V[1] += 0.1;
-	}	
-	
-	void MoveSpheresDown(int index)
-	{
-		SpheresInScene[index].center.V[1] -= 0.1;
-	}
-	void MoveSpheresLeft(int index)
-	{
-		SpheresInScene[index].center.V[0] -= 0.1;
-	}
-	void MoveSpheresRight(int index)
-	{
-		SpheresInScene[index].center.V[0] += 0.1;
-	}
-	void MoveSpheresCloser(int index)
-	{
-		SpheresInScene[index].center.V[2] -= 0.1;
-	}
-	void MoveSpheresBack(int index)
-	{
-		SpheresInScene[index].center.V[2] += 0.1;
-	}
-	void Reset()
-	{
-		SpheresInScene[0].center.V[0] = 0;
-		SpheresInScene[1].center.V[0] = 2;
-		SpheresInScene[2].center.V[0] = -2;
-		SpheresInScene[0].center.V[1] = -1;
-		SpheresInScene[1].center.V[1] = 0;
-		SpheresInScene[2].center.V[1] = 0;
-		SpheresInScene[0].center.V[2] = 3;
-		SpheresInScene[1].center.V[2] = 4;
-		SpheresInScene[2].center.V[2] = 4;
-	}
-
-	void SetLights(Light _L1, Light _L2, Light _L3, Light _L4)
-	{
-			L1 = _L1;
-			L2 = _L2;
-			L3 = _L3;
-			L4 = _L4;
-
-		LightsInScene[0] = L1;
-		LightsInScene[1] = L2;
-		LightsInScene[2] = L3;
-		LightsInScene[3] = L4;
-	}
-
-	// 2D distance
-	double distance(double x1, double y1, double x2, double y2)
-	{
-		return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
-	}
-
-	// translate from chili coordinates to traditional
-	double translateX(double x)
-	{
-		return x - ScreenWidth / 2;
-	}
-	
-	// translate from chili coordinates to traditional
-	double translateY(double y)
-	{
-		return ScreenHeight / 2 - y;
-	}
-
-	//// Returns index of closest sphere
-	//int GetClosest(int x, int y)
-	//{
-	//	int closest = 0;
-	//	int i = 0;
-	//	double temp = 0;
-	//	double dist = DBL_MAX;
-
-	//	for (; i < sizeof(SpheresInScene) / sizeof(SpheresInScene[0]); i++)
-	//	{
-	//		temp = distance(SpheresInScene[i].center.V[0], translateX(x), SpheresInScene[i].center.V[1], translateY(y));
-	//		if (temp < dist)
-	//		{
-	//			dist = temp;
-	//			closest = i;
-	//		}
-	//	}
-	//	return closest;
-	//}
-
-	//// Set closest sphere's (x,y) position to mouse position
-	//void MoveSphereWithMouse(int mouseX, int mouseY)
-	//{
-	//	int index = GetClosest(mouseX, mouseY);
-	//	SpheresInScene[0].center.V[0] = translateX(mouseX);
-	//	SpheresInScene[0].center.V[1] = translateY(mouseY);
-	//}
+	void SetSpheres(init, init, init, init);
+	void MoveSpheresUp();
+	void MoveSpheresDown();
+	void MoveSpheresLeft();
+	void MoveSpheresRight();
+	void MoveSpheresCloser();				   
+	void MoveSpheresBack();
+	void MoveSpheresUp(int index);
+	void MoveSpheresDown(int index);
+	void MoveSpheresLeft(int index);
+	void MoveSpheresRight(int index);
+	void MoveSpheresCloser(int index);
+	void MoveSpheresBack(int index);
+	void Reset();
+	void SetLights(Light _L1, Light _L2, Light _L3, Light _L4);
 
 private:
 	Sphere Sphere1, Sphere2, Sphere3, Sphere4;
