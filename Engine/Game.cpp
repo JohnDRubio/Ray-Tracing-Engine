@@ -113,10 +113,6 @@ void Game::UpdateModel()
 	{
 		gfx.Reset();
 	}
-	//if (wnd.mouse.LeftIsPressed())
-	//{
-	//	gfx.MoveSphereWithMouse(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
-	//}
 }
 
 void Game::ComposeFrame()

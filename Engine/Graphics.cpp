@@ -54,8 +54,6 @@ Graphics::Graphics( HWNDKey& key ): Sphere1(), Sphere2(), Sphere3(), Sphere4(), 
 	s2_down.set(2, 0, 4, 0, 0, 255, 1, 500);
 	s3_up.set(-2, 2, 4, 0, 255, 0, 1, 10);
 	s3_down.set(-2, 0, 4, 0, 255, 0, 1, 10);
-
-
 																		
 	s4_up.set(0, -5001, 0, 255, 255, 0, 5000, 1000);
 	s4_down.set(0, -5001, 0, 255, 255, 0, 5000, 1000);
@@ -134,7 +132,6 @@ Graphics::Graphics( HWNDKey& key ): Sphere1(), Sphere2(), Sphere3(), Sphere4(), 
 	// set backbuffer as the render target using created view
 	pImmediateContext->OMSetRenderTargets( 1,pRenderTargetView.GetAddressOf(),nullptr );
 
-
 	// set viewport dimensions
 	D3D11_VIEWPORT vp;
 	vp.Width = float( Graphics::ScreenWidth );
@@ -177,7 +174,6 @@ Graphics::Graphics( HWNDKey& key ): Sphere1(), Sphere2(), Sphere3(), Sphere4(), 
 		throw CHILI_GFX_EXCEPTION( hr,L"Creating view on sysBuffer texture" );
 	}
 
-
 	////////////////////////////////////////////////
 	// create pixel shader for framebuffer
 	// Ignore the intellisense error "namespace has no member"
@@ -189,7 +185,6 @@ Graphics::Graphics( HWNDKey& key ): Sphere1(), Sphere2(), Sphere3(), Sphere4(), 
 	{
 		throw CHILI_GFX_EXCEPTION( hr,L"Creating pixel shader" );
 	}
-	
 
 	/////////////////////////////////////////////////
 	// create vertex shader for framebuffer
@@ -202,7 +197,6 @@ Graphics::Graphics( HWNDKey& key ): Sphere1(), Sphere2(), Sphere3(), Sphere4(), 
 	{
 		throw CHILI_GFX_EXCEPTION( hr,L"Creating vertex shader" );
 	}
-	
 
 	//////////////////////////////////////////////////////////////
 	// create and fill vertex buffer with quad for rendering frame
@@ -226,7 +220,6 @@ Graphics::Graphics( HWNDKey& key ): Sphere1(), Sphere2(), Sphere3(), Sphere4(), 
 	{
 		throw CHILI_GFX_EXCEPTION( hr,L"Creating vertex buffer" );
 	}
-
 	
 	//////////////////////////////////////////
 	// create input layout for fullscreen quad
@@ -244,7 +237,6 @@ Graphics::Graphics( HWNDKey& key ): Sphere1(), Sphere2(), Sphere3(), Sphere4(), 
 	{
 		throw CHILI_GFX_EXCEPTION( hr,L"Creating input layout" );
 	}
-
 
 	////////////////////////////////////////////////////
 	// Create sampler state for fullscreen textured quad
@@ -384,6 +376,9 @@ std::wstring Graphics::Exception::GetExceptionType() const
 	return L"Chili Graphics Exception";
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// JOHNS PROGRAM STARTS HERE
+//////////////////////////////////////////////////////////////////////////////
 // Gives direction of ray 
 void Graphics::CanvasToViewport(int x, int y)
 {
@@ -436,13 +431,13 @@ void Graphics::SetSpheres(init s1, init s2, init s3, init s4)
 	SpheresInScene[3] = Sphere4;
 }
 
+// move all three spheres synchronously
 void Graphics::MoveSpheresUp()
 {
 	SpheresInScene[0].center.V[1] += 0.1;
 	SpheresInScene[1].center.V[1] += 0.1;
 	SpheresInScene[2].center.V[1] += 0.1;
 }
-
 void Graphics::MoveSpheresDown()
 {
 	SpheresInScene[0].center.V[1] -= 0.1;
@@ -473,11 +468,12 @@ void Graphics::MoveSpheresBack()
 	SpheresInScene[1].center.V[2] += 0.1;
 	SpheresInScene[2].center.V[2] += 0.1;
 }
+
+// move individual spheres
 void Graphics::MoveSpheresUp(int index)
 {
 	SpheresInScene[index].center.V[1] += 0.1;
 }
-
 void Graphics::MoveSpheresDown(int index)
 {
 	SpheresInScene[index].center.V[1] -= 0.1;
@@ -498,6 +494,8 @@ void Graphics::MoveSpheresBack(int index)
 {
 	SpheresInScene[index].center.V[2] += 0.1;
 }
+
+// reset to spheres starting location
 void Graphics::Reset()
 {
 	SpheresInScene[0].center.V[0] = 0;
@@ -557,7 +555,8 @@ void Graphics::IntersectRaySphere(int index)
 	float c = dot(CO, CO) - r * r;
 	float discriminant = b * b - 4 * a * c;
 
-	if (discriminant < 0) {
+	if (discriminant < 0) 
+	{
 		INT_PTS[0] = INT_PTS[1] = INT_MAX;
 		MISS = 1;
 		return;
@@ -571,6 +570,8 @@ void Graphics::IntersectRaySphere(int index)
 	}
 }
 
+// TODO: Add comment explaining why we have an overloaded IntersectRaySphere() fcn...
+//		 I think it had something to do with the computing the shadows
 void Graphics::IntersectRaySphere(Vec3& P, Vec3& L, int index)
 {
 	MISS = 1;
@@ -583,7 +584,8 @@ void Graphics::IntersectRaySphere(Vec3& P, Vec3& L, int index)
 	float c = dot(CP, CP) - r * r;
 	float discriminant = b * b - 4 * a * c;
 
-	if (discriminant < 0) {
+	if (discriminant < 0) 
+	{
 		INT_PTS[0] = INT_PTS[1] = INT_MAX;
 		MISS = 1;
 		return;
@@ -606,18 +608,19 @@ void Graphics::TraceRay(double t_min, double t_max)
 	// Compute pixel color
 	for (int i = 0; i < 4; i++)		// If more spheres are added, replace 4 with sizeof(SpheresInScene) / sizeof(SpheresInScene[0])
 	{
-
 		// Test if ray intersects Sphere[i]
 		IntersectRaySphere(i);
 
 		if (!MISS)
 		{
-			if (INT_PTS[0] > t_min && INT_PTS[0] < t_max && INT_PTS[0] < closest_t) {
+			if (INT_PTS[0] > t_min && INT_PTS[0] < t_max && INT_PTS[0] < closest_t) 
+			{
 				closest_t = INT_PTS[0];
 				closest_sphere = &SpheresInScene[i];
 			}
 
-			if (INT_PTS[1] > t_min && INT_PTS[1] < t_max && INT_PTS[1] <= closest_t) {
+			if (INT_PTS[1] > t_min && INT_PTS[1] < t_max && INT_PTS[1] <= closest_t) 
+			{
 				closest_t = INT_PTS[1];
 				closest_sphere = &SpheresInScene[i];
 			}
@@ -667,12 +670,14 @@ bool Graphics::ClosestIntersection(Vec3& P, Vec3& L, double t_min, double t_max)
 
 		if (!MISS)
 		{
-			if (INT_PTS[0] > t_min && INT_PTS[0] < t_max && INT_PTS[0] < closest_t2) {
+			if (INT_PTS[0] > t_min && INT_PTS[0] < t_max && INT_PTS[0] < closest_t2) 
+			{
 				closest_t2 = INT_PTS[0];
 				closest_sphere2 = &SpheresInScene[i];
 			}
 
-			if (INT_PTS[1] > t_min && INT_PTS[1] < t_max && INT_PTS[1] <= closest_t2) {
+			if (INT_PTS[1] > t_min && INT_PTS[1] < t_max && INT_PTS[1] <= closest_t2) 
+			{
 				closest_t2 = INT_PTS[1];
 				closest_sphere2 = &SpheresInScene[i];
 			}
@@ -690,9 +695,9 @@ double Graphics::ComputeLighting(int index)
 {
 	// Initialize values
 	double length_P_minus_C, t_max;
-	Vec3 L;
-	Vec3 P_Minus_C;
-	Vec3 Normal;
+	Vec3 L, P_Minus_C, Normal;
+	/*Vec3 P_Minus_C;
+	Vec3 Normal;*/
 	intensity = 0;
 	t_max = DBL_MAX;
 
