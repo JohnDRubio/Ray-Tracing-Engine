@@ -696,8 +696,6 @@ double Graphics::ComputeLighting(int index)
 	// Initialize values
 	double length_P_minus_C, t_max;
 	Vec3 L, P_Minus_C, Normal;
-	/*Vec3 P_Minus_C;
-	Vec3 Normal;*/
 	intensity = 0;
 	t_max = DBL_MAX;
 
