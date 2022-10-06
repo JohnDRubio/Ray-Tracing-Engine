@@ -41,6 +41,11 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	/*
+	* ==========================================================================================
+		0 = RED, 1 = BLUE, 2 = GREEN
+	* ==========================================================================================
+	*/
 	if (wnd.kbd.KeyIsPressed(VK_UP))
 	{
 		if (wnd.kbd.KeyIsPressed('A'))
@@ -97,7 +102,6 @@ void Game::UpdateModel()
 			gfx.MoveSpheresCloser();
 	}
 
-	// 0 = RED, 1 = BLUE, 2  = GREEN
 	if (wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
 		if (wnd.kbd.KeyIsPressed('A'))

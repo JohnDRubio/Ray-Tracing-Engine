@@ -571,7 +571,7 @@ void Graphics::IntersectRaySphere(int index)
 }
 
 // TODO: Add comment explaining why we have an overloaded IntersectRaySphere() fcn...
-//		 I think it had something to do with the computing the shadows
+//		 I think it had something to do with computing the shadows
 void Graphics::IntersectRaySphere(Vec3& P, Vec3& L, int index)
 {
 	MISS = 1;
@@ -707,7 +707,7 @@ double Graphics::ComputeLighting(int index)
 	// Set magnitude of Normal to 1
 	Normal = (1 / length_P_minus_C) * P_Minus_C;
 
-	for (int i = 0; i < 3; i++)		// If more lights are added to scene, replace 3 with sizeof(LightsInScene) / sizeof(LightsInScene[0])
+	for (int i = 0; i < 3; i++)		// If more light sources are added to scene, replace 3 with sizeof(LightsInScene) / sizeof(LightsInScene[0])
 	{
 		if (LightsInScene[i].type == Light::LTYPE::ambient)		
 		{
