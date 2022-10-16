@@ -5,4 +5,4 @@ The goal of this project is to build an interactive ray-traced scene. This is my
 
 While working through this project I am following along **__Computer Graphics From Scratch by Gabriel Gambetta__** [Source](https://gabrielgambetta.com/computer-graphics-from-scratch/)
 
-![image](https://user-images.githubusercontent.com/49953451/196012381-e34a7af3-6988-430f-8af3-9bbabfd8212e.png)
+![image](https://user-images.githubusercontent.com/49953451/196012440-d2f2a88e-8e51-4398-b5df-74b2627bd80c.png)
