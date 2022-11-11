@@ -657,6 +657,8 @@ void Graphics::TraceRay(double t_min, double t_max)
 	}
 }
 
+//TODO: Need to figure out why only red sphere is casting shadow on other spheres
+// UPDATE: Only the green sphere has shadow cast on it
 bool Graphics::ClosestIntersection(Vec3& P, Vec3& L, double t_min, double t_max)
 {
 	double closest_t2 = DBL_MAX;
