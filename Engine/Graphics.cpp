@@ -45,7 +45,9 @@ namespace FramebufferShaders
 
 using Microsoft::WRL::ComPtr;
 
-Graphics::Graphics( HWNDKey& key ): Sphere1(), Sphere2(), Sphere3(), Sphere4(), L1(), L2(), L3(), L4(), s1_up(key), s1_down(key), s2_up(key), s2_down(key), s3_up(key), s3_down(key), s4_up(key), s4_down(key), _L1(), _L2(), _L3(), _L4()
+Graphics::Graphics( HWNDKey& key ): Sphere1(), Sphere2(), Sphere3(), Sphere4(), L1(), L2(), L3(), L4(), 
+s1_up(key), s1_down(key), s2_up(key), s2_down(key), s3_up(key), s3_down(key), s4_up(key), s4_down(key), 
+_L1(), _L2(), _L3(), _L4()
 {
 
 	s1_up.set(0, 1, 3, 255, 0, 0, 1, 500);
@@ -377,7 +379,7 @@ std::wstring Graphics::Exception::GetExceptionType() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// JOHNS PROGRAM STARTS HERE
+// JOHN'S PROGRAM STARTS HERE
 //////////////////////////////////////////////////////////////////////////////
 // Gives direction of ray 
 void Graphics::CanvasToViewport(int x, int y)
@@ -499,13 +501,15 @@ void Graphics::MoveSpheresBack(int index)
 void Graphics::Reset()
 {
 	SpheresInScene[0].center.V[0] = 0;
-	SpheresInScene[1].center.V[0] = 2;
-	SpheresInScene[2].center.V[0] = -2;
 	SpheresInScene[0].center.V[1] = -1;
-	SpheresInScene[1].center.V[1] = 0;
-	SpheresInScene[2].center.V[1] = 0;
 	SpheresInScene[0].center.V[2] = 3;
+
+	SpheresInScene[1].center.V[0] = 2;
+	SpheresInScene[1].center.V[1] = 0;
 	SpheresInScene[1].center.V[2] = 4;
+
+	SpheresInScene[2].center.V[0] = -2;
+	SpheresInScene[2].center.V[1] = 0;
 	SpheresInScene[2].center.V[2] = 4;
 }
 
@@ -659,6 +663,13 @@ void Graphics::TraceRay(double t_min, double t_max)
 
 //TODO: Need to figure out why only red sphere is casting shadow on other spheres
 // UPDATE: Only the green sphere has shadow cast on it
+// ANOTHER UPDATE: You just implemented the shadow functions incorrectly. Just go through that chapter again.
+// THE BIGGEST UPDATE: 
+// You have TWO intesntiy variables!! One declared in Graphics.h and the other declared in Light.h. To fix issue:
+// 1. Read through book up through shading again
+// 2. Decide if there's a good reason for having 2 variables or not
+//		a. if there is a good reason, rename Light.h's member to L_intensity or something (track down all references first and rename those first)
+//		b. if there is NOT a good reason, make Light class a friend of Graphics so light can use intensity from graphics.h
 bool Graphics::ClosestIntersection(Vec3& P, Vec3& L, double t_min, double t_max)
 {
 	double closest_t2 = DBL_MAX;
@@ -703,8 +714,9 @@ double Graphics::ComputeLighting(int index)
 
 
 	// Set P_minus_C
-	P_Minus_C = P - SpheresInScene[index].center;
-	length_P_minus_C = vecLength(P_Minus_C);
+	length_P_minus_C = (P_Minus_C = P - SpheresInScene[index].center, vecLength(P_Minus_C));
+	/*P_Minus_C = P - SpheresInScene[index].center;
+	length_P_minus_C = vecLength(P_Minus_C);*/
 
 	// Set magnitude of Normal to 1
 	Normal = (1 / length_P_minus_C) * P_Minus_C;
